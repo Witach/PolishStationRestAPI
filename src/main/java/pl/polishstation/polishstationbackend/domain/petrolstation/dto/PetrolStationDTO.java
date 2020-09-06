@@ -1,0 +1,26 @@
+package pl.polishstation.polishstationbackend.domain.petrolstation.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import pl.polishstation.polishstationbackend.domain.localization.Localization;
+import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
+import pl.polishstation.polishstationbackend.domain.localization.dto.LocalizationDTO;
+import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStationStats;
+
+import java.util.List;
+import java.util.Set;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class PetrolStationDTO {
+    private Long id;
+    private String name;
+    private Double dkn;
+    private LocalizationDTO localization;
+    PetrolStationStats petrolStationStats;
+    private List<String> fuelTypes;
+    private List<Opinion> latestOpinion;
+}
+

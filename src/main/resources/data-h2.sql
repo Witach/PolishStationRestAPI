@@ -1,0 +1,3 @@
+-- INSERT INTO APP_ROLE(id, name) VALUES (null, 'USER');
+-- INSERT INTO APP_USER(id, email, user_password, username) VALUES(null, 'witaszek98@wp.pl', '{noop}admin', 'witaszek' );
+-- INSERT INTO APP_USER_APP_ROLE(apP_USER_ID , APP_ROLE_ID ) VALUES(1, 1);
