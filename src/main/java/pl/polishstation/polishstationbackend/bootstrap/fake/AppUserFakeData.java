@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 @Component
 @Profile("dev")
 public class AppUserFakeData {
-    static final List<String> ROLE_NAMES = Collections.unmodifiableList(List.of("ADMIN", "FAKE_USER"));
+    static final List<String> ROLE_NAMES = Collections.unmodifiableList(List.of("FAKE_ADMIN", "FAKE_USER"));
 
     @Autowired
     PasswordEncoder passwordEncoder;

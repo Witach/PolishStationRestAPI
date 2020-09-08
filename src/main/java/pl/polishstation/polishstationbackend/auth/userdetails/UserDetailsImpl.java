@@ -11,11 +11,13 @@ import java.util.stream.Collectors;
 public class UserDetailsImpl implements UserDetails {
     String username;
     String password;
+    Boolean isVerified;
     List<AuthorityImpl> authorities;
 
     public UserDetailsImpl(AppUser appUser) {
         username = appUser.getEmail();
         password = appUser.getPassword();
+        isVerified = appUser.getIsVerified();
         authorities = appUser.getAppUserRoles().stream()
                 .map(AuthorityImpl::new)
                 .collect(Collectors.toList());
@@ -53,6 +55,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isVerified;
     }
 }

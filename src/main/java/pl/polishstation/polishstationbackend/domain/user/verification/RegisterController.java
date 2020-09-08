@@ -14,7 +14,6 @@ import static pl.polishstation.polishstationbackend.utils.ExtractAppUrl.extractA
 @RestController
 @RequestMapping("/app-user")
 public class RegisterController {
-
     @Autowired
     RegisterService registerService;
 
@@ -22,6 +21,11 @@ public class RegisterController {
     public AppUserDTO registerUserAccount(@RequestBody AppUserPostDTO appUserPostDTO, HttpServletRequest request) throws MessagingException {
         var appUrl = extractAppUrl(request);
         return registerService.registerNewUser(appUserPostDTO, appUrl);
+    }
+
+    @GetMapping("/verify/{token}")
+    public AppUserDTO verifyUserAccount(@PathVariable String token) {
+        return registerService.verifyNewUser(token);
     }
 
     @ExceptionHandler(MessagingException.class)

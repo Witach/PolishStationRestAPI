@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserRepository;
+import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -16,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        AppUser user = repository.findAppUserByEmailEquals(username);
+        AppUser user = repository.findAppUserByEmailEquals(username).orElseThrow(EntityDoesNotExists::new);
         if (user == null) {
             throw new UsernameNotFoundException(username);
         }

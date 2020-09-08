@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 public class JwtUtils {
 
-    public static String SECRET;
+    public static String SECRET = "asdasdasdasd";
 
     public static Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
@@ -87,7 +87,8 @@ public class JwtUtils {
         }
 
         public JwtTokenBuilder issuedAt(LocalDateTime issuedAt) {
-            this.issuedAt = new Date(expiration.getTime());
+            var zoneDateTime = issuedAt.atZone(ZoneId.systemDefault());
+            this.issuedAt = Date.from(zoneDateTime.toInstant());
             return this;
         }
 

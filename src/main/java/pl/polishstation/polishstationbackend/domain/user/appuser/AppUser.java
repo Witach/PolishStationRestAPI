@@ -40,7 +40,6 @@ public class AppUser extends BasicEntity {
     @OneToOne(mappedBy = "appUser")
     private VerificationToken verificationToken;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "appUsers")
     @Singular private List<AppUserRole> appUserRoles = new LinkedList<>();
 
@@ -50,9 +49,8 @@ public class AppUser extends BasicEntity {
     @OneToMany(mappedBy = "user")
     private List<Opinion> opinion = new LinkedList<>();
 
-    public List<AppUserRole> addRole(AppUserRole appUserRole) {
-        appUserRoles.add(appUserRole);
+    public AppUser addRole(AppUserRole appUserRole) {
         appUserRole.getAppUsers().add(this);
-        return appUserRoles;
+        return this;
     }
 }

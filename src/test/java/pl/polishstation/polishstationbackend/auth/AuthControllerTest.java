@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsImpl;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserRepository;
+import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +35,7 @@ class AuthControllerTest {
     void setUp() {
         URL = String.format("http://localhost:%d", port);
         restTemplate = new RestTemplate();
-        this.appUser = appUserRepository.findAppUserByEmailEquals("witaszek98@wp.pl");
+        this.appUser = appUserRepository.findAppUserByEmailEquals("witaszek98@wp.pl").orElseThrow(EntityDoesNotExists::new);
     }
     @Test
     void hello() {

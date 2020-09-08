@@ -38,6 +38,7 @@ public class AppUserService {
         if(repository.existsByUsername(dto.getUsername()))
             throw exceptionResolver.apply("username", dto.getEmail());
         var newAppUser = mapper.convertIntoObject(dto);
+        newAppUser.setIsVerified(false);
         attachDefaultRoleToUser(newAppUser);
         encodeUsersPassword(newAppUser);
         return mapper.convertIntoDTO(
