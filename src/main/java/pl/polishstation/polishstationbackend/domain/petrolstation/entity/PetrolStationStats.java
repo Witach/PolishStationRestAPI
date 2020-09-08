@@ -16,6 +16,7 @@ import javax.persistence.Embeddable;
 public class PetrolStationStats implements CloneableEntity<PetrolStationStats> {
     Integer avgOpinion;
     Long amountOfOpinion;
+    Double avgPrice;
 
     @Override
     public PetrolStationStats cloneEntity() {

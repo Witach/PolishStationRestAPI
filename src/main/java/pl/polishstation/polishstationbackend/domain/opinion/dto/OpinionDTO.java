@@ -15,6 +15,6 @@ public class OpinionDTO {
     private Long id;
     private LocalDateTime date;
     private Integer mark;
-    private PetrolStation petrolStation;
-    private AppUser user;
+    private Long petrolStationId;
+    private Long userId;
 }
