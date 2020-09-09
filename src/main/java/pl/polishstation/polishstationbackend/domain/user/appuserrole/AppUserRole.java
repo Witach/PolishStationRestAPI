@@ -6,6 +6,8 @@ import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.entity.BasicEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +21,8 @@ import java.util.List;
 @Builder
 public class AppUserRole extends BasicEntity {
 
+    @NotBlank
+    @Size(min = 3, max = 12)
     @Column(unique = true, length = 32, nullable = false)
     private String name;
 

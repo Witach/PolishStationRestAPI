@@ -7,6 +7,9 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter(AccessLevel.PUBLIC)
@@ -20,16 +23,19 @@ public class Opinion extends BasicEntity implements CloneableEntity<Opinion> {
 
     private LocalDateTime date;
 
+    @Min(0)
+    @Max(5)
     @Column(precision = 1, nullable = false)
     private Integer mark;
 
+    @NotBlank
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "petrol_station_id")
     private PetrolStation petrolStation;
 
+    @NotBlank
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-
     private AppUser user;
 
     @Override

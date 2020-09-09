@@ -10,6 +10,10 @@ import pl.polishstation.polishstationbackend.domain.user.verification.Verificati
 import pl.polishstation.polishstationbackend.entity.BasicEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,23 +27,33 @@ import java.util.List;
 @Builder
 public class AppUser extends BasicEntity {
 
+    @NotBlank
+    @Size(min = 3, max = 32)
     @Column(unique = true, length = 32, nullable = false)
     private String username;
 
+    @NotBlank
+    @Email
     @Column(unique = true, length = 32, nullable = false)
     private String email;
 
+    @NotBlank
+    @Size(min = 8, max = 32)
     @Column(name = "user_password", nullable = false)
     private String password;
 
+    @NotBlank
     @Column(name = "is_verified", nullable = false)
     private Boolean isVerified = false;
 
     //revert
 
+    @NotBlank
     @OneToOne(mappedBy = "appUser")
     private VerificationToken verificationToken;
 
+    @NotBlank
+    @IsDefault
     @ManyToMany(mappedBy = "appUsers")
     @Singular private List<AppUserRole> appUserRoles = new LinkedList<>();
 

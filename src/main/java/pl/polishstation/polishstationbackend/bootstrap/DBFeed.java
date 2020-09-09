@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.bootstrap;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -21,6 +22,7 @@ import static pl.polishstation.polishstationbackend.utils.FilterFunctions.filter
 @Component
 @Slf4j
 @Profile("dev")
+@AllArgsConstructor
 public class DBFeed implements CommandLineRunner {
 
     private LocalizationFakeData localizationFakeData;
@@ -36,30 +38,6 @@ public class DBFeed implements CommandLineRunner {
     private AppUserRoleRepository appUserRoleRepository;
     private LocalizationRepository localizationRepository;
 
-    public DBFeed(LocalizationFakeData localizationFakeData,
-                  OpinionFakeData opinionFakeData,
-                  AppUserFakeData appUserFakeData,
-                  FuelPriceFakeData fuelPriceFakeData,
-                  PetrolStationFakeData petrolStationFakeData,
-                  FuelTypeRepository fuelTypeRepository,
-                  FuelPriceRepository fuelPriceRepository,
-                  PetrolStationRepository petrolStationRepository,
-                  OpinionRpository opinionRpository, AppUserRepository appUserRepository,
-                  AppUserRoleRepository appUserRoleRepository,
-                  LocalizationRepository localizationRepository) {
-        this.localizationFakeData = localizationFakeData;
-        this.opinionFakeData = opinionFakeData;
-        this.appUserFakeData = appUserFakeData;
-        this.fuelPriceFakeData = fuelPriceFakeData;
-        this.petrolStationFakeData = petrolStationFakeData;
-        this.fuelTypeRepository = fuelTypeRepository;
-        this.fuelPriceRepository = fuelPriceRepository;
-        this.petrolStationRepository = petrolStationRepository;
-        this.opinionRpository = opinionRpository;
-        this.appUserRepository = appUserRepository;
-        this.appUserRoleRepository = appUserRoleRepository;
-        this.localizationRepository = localizationRepository;
-    }
 
     @Override
     public void run(String... args) {

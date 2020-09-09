@@ -10,6 +10,8 @@ import pl.polishstation.polishstationbackend.entity.BasicEntity;
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,11 +24,14 @@ import java.util.List;
 @Builder
 public class PetrolStation extends BasicEntity implements CloneableEntity<PetrolStation> {
 
+    @NotBlank
+    @Size(min = 3, max = 32)
     @Column(nullable = false, length = 128)
     private String name;
 
     private Long dkn;
 
+    @NotBlank
     @OneToOne(optional = false, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Localization localization;
 

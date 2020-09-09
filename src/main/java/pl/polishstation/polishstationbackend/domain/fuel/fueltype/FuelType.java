@@ -6,6 +6,7 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Builder
 public class FuelType extends BasicEntity {
 
+    @Size(min = 1, max = 16)
     @Column(unique = true, nullable = false)
     private String name;
 

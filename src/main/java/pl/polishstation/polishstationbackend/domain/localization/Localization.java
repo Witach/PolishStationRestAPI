@@ -7,6 +7,10 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -16,15 +20,19 @@ import javax.persistence.*;
 @Builder
 public class Localization extends BasicEntity implements CloneableEntity<Localization> {
 
+    @Size(min = 3, max= 64)
     @Column(length = 32)
     private String name;
 
+    @Size(min = 3, max = 64)
     @Column(length = 32)
     private String street;
 
+    @Size(min = 1, max = 8)
     @Column(length = 8)
     private String number;
 
+    @Pattern(regexp = "^[0-9][0-9]-[0-9][0-9][0-9]$", flags = Pattern.Flag.UNICODE_CASE)
     @Column(length = 6)
     private String postalCode;
 
@@ -34,11 +42,13 @@ public class Localization extends BasicEntity implements CloneableEntity<Localiz
     @Column(name = "long", length = 8)
     private String _long;
 
+    @Size(min = 3, max= 64)
     @Column(length = 32)
     private String province;
 
     //revert
 
+    @NotBlank
     @OneToOne(optional = false, mappedBy = "localization")
     private PetrolStation petrolStation;
 
