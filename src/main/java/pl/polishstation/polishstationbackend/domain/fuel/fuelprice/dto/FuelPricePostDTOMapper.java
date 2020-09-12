@@ -2,6 +2,7 @@ package pl.polishstation.polishstationbackend.domain.fuel.fuelprice.dto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pl.polishstation.polishstationbackend.apiutils.BasicDomainPostDTOMapper;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
@@ -9,7 +10,7 @@ import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserReposito
 import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 
 @Component
-public class FuelPricePostDTOMapper {
+public class FuelPricePostDTOMapper implements BasicDomainPostDTOMapper<FuelPrice, FuelPricePostDTO> {
 
     @Autowired
     AppUserRepository appUserRepository;
@@ -18,6 +19,7 @@ public class FuelPricePostDTOMapper {
     @Autowired
     PetrolStationRepository petrolStationRepository;
 
+    @Override
     public FuelPrice convertIntoObject(FuelPricePostDTO fuelPricePostDTO) {
         var fuelType = fuelTypeRepository.findByName(fuelPricePostDTO.getFuelType())
                 .orElseThrow(EntityDoesNotExists::new);

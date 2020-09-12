@@ -11,10 +11,6 @@ import org.springframework.web.client.RestTemplate;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationDTO;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationDTOMapper;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationFullConverter;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationService;
 import pl.polishstation.polishstationbackend.utils.JsonWriter;
 
 import java.io.File;
@@ -25,7 +21,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class InfrastructureFuelStationServiceTest {

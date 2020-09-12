@@ -1,6 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.petrolstation.dto;
 
 import org.mapstruct.Mapper;
+import pl.polishstation.polishstationbackend.apiutils.BasicDomainDTOMapper;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 
@@ -9,10 +10,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Mapper
-public interface PetrolStationDTOMapper {
+public interface PetrolStationDTOMapper extends BasicDomainDTOMapper<PetrolStation, PetrolStationDTO> {
     PetrolStationDTO convertIntoDTO(PetrolStation petrolStation);
     PetrolStation convertIntoObject(PetrolStationDTO petrolStationDTO);
-    PetrolStation convertIntoObject(PetrolStationPostDTO petrolStationPostDTO);
     default Optional<Double> convertOptional(Double d) {
         return Optional.ofNullable(d);
     }

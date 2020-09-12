@@ -1,6 +1,4 @@
-package pl.polishstation.polishstationbackend.domain.fuel.fuelprice;
-
-import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.validation.AppUserVerifiedValidator;
+package pl.polishstation.polishstationbackend.domain.fuel.fuelprice.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
