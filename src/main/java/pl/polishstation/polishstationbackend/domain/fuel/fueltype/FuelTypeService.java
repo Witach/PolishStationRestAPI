@@ -2,6 +2,7 @@ package pl.polishstation.polishstationbackend.domain.fuel.fueltype;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.polishstation.polishstationbackend.apiutils.StringifiedDomainService;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.dto.FuelTypeMapper;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.dto.FuelTypeDTO;
 
@@ -10,28 +11,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class FuelTypeService {
-
-    @Autowired
-    FuelTypeMapper mapper;
-    @Autowired
-    FuelTypeRepository repository;
-
-    public FuelTypeDTO addEntity(FuelTypeDTO dto) {
-        var fuelType = mapper.convertIntoObject(dto);
-        return mapper.convertIntoDTO(
-                repository.save(fuelType)
-        );
-    }
+public class FuelTypeService extends StringifiedDomainService<FuelType, FuelTypeDTO> {
 
     public void deleteEntity(String name) {
-        repository.deleteFuelTypeByNameEquals(name);
-    }
-
-    public List<String> getAllEntities() {
-        return repository.findAll().stream()
-                .map(FuelType::getName)
-                .collect(Collectors.toList());
+        ((FuelTypeRepository)repository).deleteFuelTypeByNameEquals(name);
     }
 
     public void persistsDefaultFuelTypes() {
@@ -41,5 +24,4 @@ public class FuelTypeService {
 
         repository.saveAll(fuelTypes);
     }
-
 }

@@ -20,10 +20,7 @@ import pl.polishstation.polishstationbackend.auth.JwtUtils;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserRepository;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserService;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTOMapper;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTOMapperImpl;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
+import pl.polishstation.polishstationbackend.domain.user.appuser.dto.*;
 
 import javax.mail.MessagingException;
 
@@ -72,6 +69,11 @@ class RegisterServiceTest {
     @Autowired
     private AppUserDTOMapperImpl appUserDTOMapper;
 
+    private AppUserPostDTOMapperImpl appUserPostDTOMapper = new AppUserPostDTOMapperImpl();
+
+    @Mock
+    private AppUserPostDTOMapperImpl appUserPostDTOMapperMock;
+
     private AppUserPostDTO appUserPostDTO;
 
     private AppUser appUser;
@@ -111,8 +113,8 @@ class RegisterServiceTest {
     @Test
     void shouldSendMailWithToken() throws MessagingException {
         doReturn("HAPPY").when(templateEngine).process(anyString(), any());
-        var appUser = appUserDTOMapper.convertIntoObject(appUserPostDTO);
-        when(appUserDTOMapperMock.convertIntoObject(appUserPostDTO)).thenReturn(appUser);
+        var appUser = appUserPostDTOMapper.convertIntoObject(appUserPostDTO);
+        when(appUserPostDTOMapperMock.convertIntoObject(appUserPostDTO)).thenReturn(appUser);
         doNothing().when(emailSender).sendMail(anyString(), anyString());
         when(appUserService.addEntity(appUserPostDTO)).thenReturn(appUserDTOMapper.convertIntoDTO(appUser));
 

@@ -4,6 +4,7 @@ import com.github.javafaker.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.polishstation.polishstationbackend.apiutils.BasicDomainService;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTOMapper;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
@@ -18,12 +19,11 @@ import java.util.stream.Collectors;
 import static pl.polishstation.polishstationbackend.exception.ExcpetionFactory.uniqueDataExceptionOfClassResolver;
 
 @Service
-public class AppUserService {
+public class AppUserService extends BasicDomainService<AppUser, AppUserDTO, AppUserPostDTO> {
 
     @Autowired
-    AppUserRepository repository;
-    @Autowired
-    AppUserDTOMapper mapper;
+    AppUserRepository appUserRepository;
+
     @Autowired
     AppUserRoleRepository appUserRoleRepository;
 
@@ -33,11 +33,11 @@ public class AppUserService {
     BiFunction<String, String, UniqueDataArleadyExists> exceptionResolver = uniqueDataExceptionOfClassResolver(AppUser.class);
 
     public AppUserDTO addEntity(AppUserPostDTO dto) {
-        if(repository.existsByEmail(dto.getEmail()))
+        if(appUserRepository.existsByEmail(dto.getEmail()))
             throw exceptionResolver.apply("email", dto.getEmail());
-        if(repository.existsByUsername(dto.getUsername()))
+        if(appUserRepository.existsByUsername(dto.getUsername()))
             throw exceptionResolver.apply("username", dto.getEmail());
-        var newAppUser = mapper.convertIntoObject(dto);
+        var newAppUser = postDTOMapper.convertIntoObject(dto);
         newAppUser.setIsVerified(false);
         attachDefaultRoleToUser(newAppUser);
         encodeUsersPassword(newAppUser);
@@ -55,28 +55,5 @@ public class AppUserService {
     private void attachDefaultRoleToUser(AppUser newAppUser) {
         var role = appUserRoleRepository.getDefaultUserRole().orElseThrow();
         newAppUser.addRole(role);
-    }
-
-    public void deleteEntity(Long entity) {
-        repository.deleteById(entity);
-    }
-
-    public void updateEntity(AppUserDTO dto, Long id) {
-        if(!repository.existsById(id))
-            throw new EntityDoesNotExists();
-        var appUser = mapper.convertIntoOject(dto);
-        repository.save(appUser);
-    }
-
-    public AppUserDTO getEntityById(Long id) {
-        return repository.findById(id)
-                .map(mapper::convertIntoDTO)
-                .orElseThrow(EntityDoesNotExists::new);
-    }
-
-    public List<AppUserDTO> getAllEntities() {
-        return repository.findAll().stream()
-                .map(mapper::convertIntoDTO)
-                .collect(Collectors.toList());
     }
 }

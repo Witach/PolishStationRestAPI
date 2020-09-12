@@ -1,6 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.fuel.fuelprice;
 
 import lombok.*;
+import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.validation.Precision;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.validation.Verified;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.entity.BasicEntity;
@@ -9,8 +10,6 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
