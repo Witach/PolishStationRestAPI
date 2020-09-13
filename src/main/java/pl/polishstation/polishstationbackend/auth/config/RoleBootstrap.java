@@ -2,6 +2,7 @@ package pl.polishstation.polishstationbackend.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRole;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import static pl.polishstation.polishstationbackend.domain.user.appuserrole.DefaultUserRoles.ROLES_NAMES;
 
 @Component
+@Order(1)
 public class RoleBootstrap implements CommandLineRunner {
 
     @Autowired

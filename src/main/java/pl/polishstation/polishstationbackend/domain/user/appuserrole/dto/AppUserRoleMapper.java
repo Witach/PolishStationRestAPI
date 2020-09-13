@@ -1,7 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.user.appuserrole.dto;
 
 import org.mapstruct.Mapper;
-import pl.polishstation.polishstationbackend.apiutils.StringifiedDomainMapper;
+import pl.polishstation.polishstationbackend.apiutils.stringified.StringifiedDomainMapper;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRole;
 
 @Mapper

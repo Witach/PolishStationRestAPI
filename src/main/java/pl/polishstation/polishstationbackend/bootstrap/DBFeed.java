@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import pl.polishstation.polishstationbackend.bootstrap.fake.*;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
@@ -23,6 +24,7 @@ import static pl.polishstation.polishstationbackend.utils.FilterFunctions.filter
 @Slf4j
 @Profile("dev")
 @AllArgsConstructor
+@Order(3)
 public class DBFeed implements CommandLineRunner {
 
     private LocalizationFakeData localizationFakeData;

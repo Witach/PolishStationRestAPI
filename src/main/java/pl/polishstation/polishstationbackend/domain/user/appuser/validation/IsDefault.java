@@ -1,4 +1,4 @@
-package pl.polishstation.polishstationbackend.domain.user.appuser;
+package pl.polishstation.polishstationbackend.domain.user.appuser.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

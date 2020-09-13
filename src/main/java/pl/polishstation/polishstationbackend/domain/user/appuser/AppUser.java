@@ -1,19 +1,15 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser;
 
 import lombok.*;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
+import pl.polishstation.polishstationbackend.domain.user.appuser.validation.IsDefault;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRole;
 import pl.polishstation.polishstationbackend.domain.user.verification.VerificationToken;
 import pl.polishstation.polishstationbackend.entity.BasicEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,21 +34,20 @@ public class AppUser extends BasicEntity {
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 32)
     @Column(name = "user_password", nullable = false)
     private String password;
 
-    @NotBlank
+    @NotNull
     @Column(name = "is_verified", nullable = false)
     private Boolean isVerified = false;
 
     //revert
 
-    @NotBlank
+    @NotNull
     @OneToOne(mappedBy = "appUser")
     private VerificationToken verificationToken;
 
-    @NotBlank
+    @NotNull
     @IsDefault
     @ManyToMany(mappedBy = "appUsers")
     @Singular private List<AppUserRole> appUserRoles = new LinkedList<>();

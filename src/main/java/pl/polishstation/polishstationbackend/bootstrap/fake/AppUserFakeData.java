@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRole;
+import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
 import pl.polishstation.polishstationbackend.domain.user.verification.VerificationToken;
 import pl.polishstation.polishstationbackend.domain.user.verification.VerificationTokenRepository;
 
@@ -28,6 +29,8 @@ public class AppUserFakeData {
     @Autowired
     FakeValuesService fakeValuesService;
     @Autowired
+    AppUserRoleRepository appUserRoleRepository;
+    @Autowired
     private Random random;
     @Autowired
     private Faker faker;
@@ -43,9 +46,10 @@ public class AppUserFakeData {
 
     public AppUser fakeAppUserOfType(AppUserRole appUserRole) {
         var token = fakeVerificationToken();
+        var defaultUserRole = appUserRoleRepository.getDefaultUserRole().orElseThrow();
         var appUser = AppUser.builder()
                 .email(fakeEmail())
-                .appUserRoles(List.of(appUserRole))
+                .appUserRoles(List.of(appUserRole, defaultUserRole))
                 .username(fakeUserName())
                 .verificationToken(token)
                 .isVerified(true)

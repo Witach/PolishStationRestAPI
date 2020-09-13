@@ -1,4 +1,4 @@
-package pl.polishstation.polishstationbackend.apiutils;
+package pl.polishstation.polishstationbackend.apiutils.basic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package pl.polishstation.polishstationbackend.apiutils;
+package pl.polishstation.polishstationbackend.apiutils.basic;
 
 public interface BasicDomainDTOMapper<Domain, DomainDTO> {
     DomainDTO convertIntoDTO(Domain domain);

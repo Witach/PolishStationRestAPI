@@ -1,9 +1,9 @@
-package pl.polishstation.polishstationbackend.apiutils;
+package pl.polishstation.polishstationbackend.apiutils.stringified;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pl.polishstation.polishstationbackend.domain.fuel.fueltype.dto.FuelTypeDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -27,7 +27,7 @@ public class StringifiedDomainController<Domain, DomainDTO> {
 
     @ResponseStatus(CREATED)
     @PostMapping
-    public DomainDTO create(@RequestBody DomainDTO dto) {
+    public DomainDTO create(@Valid @RequestBody DomainDTO dto) {
         return service.addEntity(dto);
     }
 }

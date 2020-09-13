@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter(AccessLevel.PUBLIC)
@@ -28,12 +29,12 @@ public class Opinion extends BasicEntity implements CloneableEntity<Opinion> {
     @Column(precision = 1, nullable = false)
     private Integer mark;
 
-    @NotBlank
+    @NotNull
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "petrol_station_id")
     private PetrolStation petrolStation;
 
-    @NotBlank
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private AppUser user;

@@ -1,12 +1,9 @@
-package pl.polishstation.polishstationbackend.apiutils;
+package pl.polishstation.polishstationbackend.apiutils.basic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pl.polishstation.polishstationbackend.aspect.Loggable;
-import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceService;
-import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.dto.FuelPriceDTO;
-import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.dto.FuelPricePostDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -31,7 +28,7 @@ public abstract class BasicDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @ResponseStatus(CREATED)
     @PatchMapping("/{id}")
-    public void update(@RequestBody DomainPostDTO dto, @PathVariable Long id) {
+    public void update(@Valid @RequestBody DomainPostDTO dto, @PathVariable Long id) {
         service.updateEntity(dto, id);
     }
 
@@ -43,7 +40,7 @@ public abstract class BasicDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @ResponseStatus(CREATED)
     @PostMapping
-    public DomainDTO post(@RequestBody DomainPostDTO dto) {
+    public DomainDTO post(@Valid @RequestBody DomainPostDTO dto) {
         return service.addEntity(dto);
     }
 

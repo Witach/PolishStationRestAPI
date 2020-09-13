@@ -1,7 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.petrolstation.dto;
 
 import org.mapstruct.Mapper;
-import pl.polishstation.polishstationbackend.apiutils.BasicDomainPostDTOMapper;
+import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainPostDTOMapper;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 

@@ -1,20 +1,15 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser;
 
-import com.github.javafaker.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.polishstation.polishstationbackend.apiutils.BasicDomainService;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTOMapper;
+import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
-import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 import pl.polishstation.polishstationbackend.exception.UniqueDataArleadyExists;
 
-import java.util.List;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 import static pl.polishstation.polishstationbackend.exception.ExcpetionFactory.uniqueDataExceptionOfClassResolver;
 

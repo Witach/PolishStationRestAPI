@@ -30,13 +30,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        Optional.ofNullable(request.getHeader(AUTH_HEADER_NAME))
-//                .filter(this::isStartsWithBearer)
-//                .map(FileterAuthData::new)
-//                .ifPresent(
-//                        fileterAuthData -> decodeToken(request, fileterAuthData)
-//                );
-
+        Optional.ofNullable(request.getHeader(AUTH_HEADER_NAME))
+                .filter(this::isStartsWithBearer)
+                .map(FileterAuthData::new)
+                .ifPresent(
+                        fileterAuthData -> decodeToken(request, fileterAuthData)
+                );
         filterChain.doFilter(request, response);
     }
 
@@ -45,7 +44,6 @@ public class JwtFilter extends OncePerRequestFilter {
         if (validateToken(fileterAuthData.getJwt(), userDetails)) {
             var authToken = authTokenDataInstance(userDetails);
             authToken.setDetails(detailseSourceInstance(request));
-
             SecurityContextHolder
                     .getContext()
                     .setAuthentication(authToken);
@@ -57,7 +55,6 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean isStartsWithBearer(String jwt) {
-
         return Objects.nonNull(jwt) &&
                 jwt.startsWith(BEARER_TAG) &&
                 SecurityContextHolder.getContext().getAuthentication() == null;

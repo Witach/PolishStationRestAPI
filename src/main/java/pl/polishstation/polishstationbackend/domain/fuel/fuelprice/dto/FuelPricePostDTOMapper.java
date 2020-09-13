@@ -2,7 +2,7 @@ package pl.polishstation.polishstationbackend.domain.fuel.fuelprice.dto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pl.polishstation.polishstationbackend.apiutils.BasicDomainPostDTOMapper;
+import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainPostDTOMapper;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;

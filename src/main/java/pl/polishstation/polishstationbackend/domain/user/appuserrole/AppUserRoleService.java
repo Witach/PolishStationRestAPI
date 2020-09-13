@@ -1,7 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.user.appuserrole;
 
 import org.springframework.stereotype.Service;
-import pl.polishstation.polishstationbackend.apiutils.StringifiedDomainService;
+import pl.polishstation.polishstationbackend.apiutils.stringified.StringifiedDomainService;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.dto.AppUserRoleDTO;
 
 @Service

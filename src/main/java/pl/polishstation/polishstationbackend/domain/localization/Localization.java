@@ -7,10 +7,7 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter(AccessLevel.PUBLIC)
 @Setter(AccessLevel.PUBLIC)
@@ -48,7 +45,7 @@ public class Localization extends BasicEntity implements CloneableEntity<Localiz
 
     //revert
 
-    @NotBlank
+    @NotNull
     @OneToOne(optional = false, mappedBy = "localization")
     private PetrolStation petrolStation;
 

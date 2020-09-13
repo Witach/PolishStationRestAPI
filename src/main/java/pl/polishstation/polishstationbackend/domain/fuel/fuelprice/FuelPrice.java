@@ -11,6 +11,7 @@ import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 
@@ -36,12 +37,12 @@ public class FuelPrice extends BasicEntity implements CloneableEntity<FuelPrice>
     @JoinColumn(name = "user_id")
     private AppUser user;
 
-    @NotBlank
+    @NotNull
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "fuel_type_id")
     private FuelType fuelType;
 
-    @NotBlank
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "petrol_station_id")
     private PetrolStation petrolStation;

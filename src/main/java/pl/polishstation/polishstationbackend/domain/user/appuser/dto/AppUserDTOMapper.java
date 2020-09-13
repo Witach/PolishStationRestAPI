@@ -1,8 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser.dto;
 
 import org.mapstruct.Mapper;
-import pl.polishstation.polishstationbackend.apiutils.BasicDomainDTOMapper;
-import pl.polishstation.polishstationbackend.apiutils.BasicDomainPostDTOMapper;
+import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainDTOMapper;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRole;
 

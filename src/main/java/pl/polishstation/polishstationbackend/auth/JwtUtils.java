@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
+import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsImpl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -52,7 +53,10 @@ public class JwtUtils {
     }
 
     public static String generateToken(UserDetails userDetails) {
-        return createToken(new HashMap<>(), userDetails.getUsername());
+        var userDetailsImpl = (UserDetailsImpl)userDetails;
+        var claimsMap = new HashMap<String, Object>();
+        claimsMap.put("userDetails", userDetailsImpl);
+        return createToken(claimsMap, userDetails.getUsername());
     }
 
     private static String createToken(Map<String, Object> claims, String subject) {

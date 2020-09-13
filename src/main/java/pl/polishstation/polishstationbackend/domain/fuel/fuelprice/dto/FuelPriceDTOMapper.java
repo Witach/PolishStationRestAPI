@@ -2,7 +2,7 @@ package pl.polishstation.polishstationbackend.domain.fuel.fuelprice.dto;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import pl.polishstation.polishstationbackend.apiutils.BasicDomainDTOMapper;
+import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainDTOMapper;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 

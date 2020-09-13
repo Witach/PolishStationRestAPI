@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class UserDetailsImpl implements UserDetails {
     String username;
     String password;
+    Long userId;
     Boolean isVerified;
     List<AuthorityImpl> authorities;
 
@@ -56,5 +57,13 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isVerified;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
