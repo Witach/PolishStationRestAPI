@@ -1,4 +1,4 @@
-package pl.polishstation.polishstationbackend.apiutils;
+package pl.polishstation.polishstationbackend.apiutils.paged;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
