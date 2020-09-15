@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
-import pl.polishstation.polishstationbackend.externalapis.googleapi.dto.Location;
+import pl.polishstation.polishstationbackend.utils.geo.Location;
 
 
 import static java.lang.Long.parseLong;

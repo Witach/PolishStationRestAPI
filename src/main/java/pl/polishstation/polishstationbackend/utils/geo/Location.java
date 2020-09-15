@@ -1,4 +1,4 @@
-package pl.polishstation.polishstationbackend.externalapis.googleapi.dto;
+package pl.polishstation.polishstationbackend.utils.geo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,4 +12,13 @@ import lombok.NoArgsConstructor;
 public class Location {
     private Double lat;
     private Double _long;
+
+    public double getRadiansLat() {
+        return  Math.toRadians(getLat());
+    }
+
+    public double getRadiansLong() {
+        return Math.toRadians(get_long());
+    }
+
 }

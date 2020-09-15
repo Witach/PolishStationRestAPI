@@ -33,9 +33,13 @@ public class Localization extends BasicEntity implements CloneableEntity<Localiz
     @Column(length = 6)
     private String postalCode;
 
+    @DecimalMin("-90")
+    @DecimalMax("90")
     @Column(length = 8)
     private String lat;
 
+    @DecimalMin("-180")
+    @DecimalMax("180")
     @Column(name = "long", length = 8)
     private String _long;
 
