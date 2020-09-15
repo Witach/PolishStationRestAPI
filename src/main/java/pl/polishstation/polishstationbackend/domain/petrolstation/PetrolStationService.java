@@ -3,13 +3,14 @@ package pl.polishstation.polishstationbackend.domain.petrolstation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
+import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 
 @Service
-public class PetrolStationService extends BasicDomainService<PetrolStation, PetrolStationDTO, PetrolStationPostDTO> {
+public class PetrolStationService extends FilterDomainService<PetrolStation, PetrolStationDTO, PetrolStationPostDTO> {
 
     @Autowired
     LocalizationRepository localizationRepository;
