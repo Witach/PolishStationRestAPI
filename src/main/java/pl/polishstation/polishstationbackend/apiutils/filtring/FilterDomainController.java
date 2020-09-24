@@ -24,7 +24,7 @@ public abstract class FilterDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @ResponseStatus(OK)
     @GetMapping
-    public Page<DomainDTO> get(Pageable pageable, MultiValueMap<String, Object> filtringParams) {
+    public Page<DomainDTO> get(Pageable pageable, MultiValueMap<String, String> filtringParams) {
         return service.searchForEntity(pageable, filtringParams);
     }
 

@@ -15,7 +15,7 @@ public abstract class FilterDomainService<Domain, DomainDTO, DomainPostDTO> exte
     @Autowired
     protected JpaSpecificationExecutor<Domain> specificationExecutor;
 
-    Page<DomainDTO> searchForEntity(Pageable pageable, MultiValueMap<String, Object> filterParams) {
+    Page<DomainDTO> searchForEntity(Pageable pageable, MultiValueMap<String, String> filterParams) {
         var filterSpec = specFactory.specificationFrom(filterParams);
         return specificationExecutor.findAll(filterSpec, pageable).map(mapper::convertIntoDTO);
     }

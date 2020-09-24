@@ -13,6 +13,6 @@ public class PrecisionValidator implements ConstraintValidator<Precision, Double
    }
 
    private boolean checkForPrecision(String moneyLabel) {
-      return moneyLabel.split("\\.")[1].length() == 2;
+      return moneyLabel.split("\\.")[1].length() <= 2;
    }
 }

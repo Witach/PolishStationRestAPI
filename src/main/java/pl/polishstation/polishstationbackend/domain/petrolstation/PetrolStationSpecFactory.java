@@ -8,8 +8,9 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 
 @Component
 public class PetrolStationSpecFactory implements SpecificationFactory<PetrolStation> {
+
     @Override
-    public Specification<PetrolStation> specificationFrom(MultiValueMap<String, Object> filterParams) {
+    public Specification<PetrolStation> specificationFrom(MultiValueMap<String, String> filterParams) {
         return null;
     }
 }

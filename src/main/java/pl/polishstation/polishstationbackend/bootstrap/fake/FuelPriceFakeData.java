@@ -38,17 +38,20 @@ public class FuelPriceFakeData {
                     var appUser = appUsers.get(v);
                     var fuelPricePart = fuelPrices.subList(getStartIndexOfPath(v), getEndIndexOfPart(v));
                     appUser.setFuelPrices(fuelPricePart);
+                    fuelPricePart.forEach(fuelPrice -> fuelPrice.setUser(appUser));
                 });
 
         return fuelPrices;
     }
 
     public FuelPrice fakeFuelPriceOfType(FuelType fuelType) {
-        return FuelPrice.builder()
+        var fuelPrice = FuelPrice.builder()
                 .date(fakeDate.fakeDateOnePastMonth())
                 .fuelType(fuelType)
                 .price(fakeFuelPriceValue())
                 .build();
+        fuelType.getFuelPrices().add(fuelPrice);
+        return fuelPrice;
     }
 
     public Double fakeFuelPriceValue() {
