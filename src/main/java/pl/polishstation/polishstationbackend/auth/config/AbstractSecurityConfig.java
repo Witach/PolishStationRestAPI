@@ -45,7 +45,7 @@ public abstract class AbstractSecurityConfig extends WebSecurityConfigurerAdapte
         http.headers().frameOptions().sameOrigin();
         http = makeHttpChain(http);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     abstract HttpSecurity makeHttpChain(HttpSecurity httpSecurity) throws Exception;

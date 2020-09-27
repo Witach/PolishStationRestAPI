@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Table(name = "app_user")
 @Getter(AccessLevel.PUBLIC)
@@ -44,22 +45,28 @@ public class AppUser extends BasicEntity {
     //revert
 
     @NotNull
-    @OneToOne(mappedBy = "appUser")
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
     private VerificationToken verificationToken;
 
     @NotNull
     @IsDefault
     @ManyToMany(mappedBy = "appUsers")
-    @Singular private List<AppUserRole> appUserRoles = new LinkedList<>();
+    private List<AppUserRole> appUserRoles = new LinkedList<>();
 
     @OneToMany(mappedBy = "user")
-    @Singular private List<FuelPrice> fuelPrices = new LinkedList<>();
+    @Singular
+    private List<FuelPrice> fuelPrices = new LinkedList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Opinion> opinion = new LinkedList<>();
 
     public AppUser addRole(AppUserRole appUserRole) {
         appUserRole.getAppUsers().add(this);
+        this.appUserRoles.add(appUserRole);
         return this;
+    }
+
+    public static class AppUserBuilder {
+        private List<AppUserRole> appUserRoles = new LinkedList<>();
     }
 }

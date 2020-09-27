@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser;
 
+import com.github.javafaker.App;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,19 @@ public class AppUserService extends BasicDomainService<AppUser, AppUserDTO, AppU
     BiFunction<String, String, UniqueDataArleadyExists> exceptionResolver = uniqueDataExceptionOfClassResolver(AppUser.class);
 
     public AppUserDTO addEntity(AppUserPostDTO dto) {
+        var newAppUser = prepareNewUser(dto);
+        return mapper.convertIntoDTO(
+                repository.save(newAppUser)
+        );
+    }
+
+    public AppUserDTO persistsAppUser(AppUser appUser) {
+        return mapper.convertIntoDTO(
+                repository.save(appUser)
+        );
+    }
+
+    public AppUser prepareNewUser(AppUserPostDTO dto) {
         if(appUserRepository.existsByEmail(dto.getEmail()))
             throw exceptionResolver.apply("email", dto.getEmail());
         if(appUserRepository.existsByUsername(dto.getUsername()))
@@ -36,9 +50,7 @@ public class AppUserService extends BasicDomainService<AppUser, AppUserDTO, AppU
         newAppUser.setIsVerified(false);
         attachDefaultRoleToUser(newAppUser);
         encodeUsersPassword(newAppUser);
-        return mapper.convertIntoDTO(
-                repository.save(newAppUser)
-        );
+        return newAppUser;
     }
 
     private void encodeUsersPassword(AppUser newAppUser) {

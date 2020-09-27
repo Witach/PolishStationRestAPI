@@ -6,9 +6,12 @@ spring:
     port: 587
     username: 'witach98@gmail.com'
     password: 'retsad123'
+    protocol: 'smtp'
     properties:
       mail:
         smtp:
+          ssl:
+            trust: smtp.gmail.com
           auth: true
           starttls:
             enable: true

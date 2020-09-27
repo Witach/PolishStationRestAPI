@@ -55,7 +55,6 @@ public class AppUserFakeData {
                 .isVerified(true)
                 .password(passwordEncoder.encode(faker.animal().name()))
                 .build();
-        verificationTokenRepository.save(token);
         token.setAppUser(appUser);
         return appUser;
     }

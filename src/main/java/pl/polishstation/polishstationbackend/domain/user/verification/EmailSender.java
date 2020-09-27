@@ -20,7 +20,7 @@ public class EmailSender {
 
         var mimeMessage = javaEmailSender.createMimeMessage();
         var mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setTo("witach98@gmail.com");
         mimeMessageHelper.setFrom("witach98@gmail.com");
         mimeMessageHelper.setSubject("Verify registration at PolishStation");
         mimeMessageHelper.setText(text, true);

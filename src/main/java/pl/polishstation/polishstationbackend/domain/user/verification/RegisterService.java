@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsImpl;
+import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserRepository;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserService;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
@@ -34,8 +35,6 @@ public class RegisterService {
     @Autowired
     private AppUserService appUserService;
     @Autowired
-    private AppUserPostDTOMapper appUserPostDTOMapper;
-    @Autowired
     private AppUserDTOMapper appUserDTOMapper;
 
     @Value("${register.expiration-date-days}")
@@ -44,30 +43,40 @@ public class RegisterService {
     AppUserDTO verifyNewUser(String token) {
         var email = extractUsername(token);
         var appUser = appUserRepository.findAppUserByEmailEquals(email).orElseThrow(EntityDoesNotExists::new);
-        if(appUser.getIsVerified())
-            throw new UserArleadyVerified();
-        if(extractExpiration(token).before(new Date()))
-            throw new TokenExpired();
-        if(!validateToken(token, new UserDetailsImpl(appUser)))
-            throw new WrongTokenData();
+        verifyToken(token, appUser);
         appUser.setIsVerified(true);
         return appUserDTOMapper.convertIntoDTO(
                 appUserRepository.save(appUser)
         );
     }
 
+    private void verifyToken(String token, AppUser appUser) {
+        if(appUser.getIsVerified())
+            throw new UserArleadyVerified();
+        if(extractExpiration(token).before(new Date()))
+            throw new TokenExpired();
+        if(!validateToken(token, new UserDetailsImpl(appUser)))
+            throw new WrongTokenData();
+        if(token.equals(appUser.getVerificationToken().getToken()))
+            throw new WrongTokenData();
+    }
+
     AppUserDTO registerNewUser(AppUserPostDTO appUserPostDTO, String url) throws MessagingException {
-        var appUser = appUserPostDTOMapper.convertIntoObject(appUserPostDTO);
+        var appUser = appUserService.prepareNewUser(appUserPostDTO);
+        var token = verificationTokenInstanceFromAppUser(appUser);
+        appUser.setVerificationToken(token);
+        var emailContent = generateRegistrationEmailContext(token.getToken(), url);
+        emailSender.sendMail(appUser.getEmail(), emailContent);
+        return appUserService.persistsAppUser(appUser);
+    }
+
+    private VerificationToken verificationTokenInstanceFromAppUser(AppUser appUser) {
         var expirationDate = calculateExpirationDate(LocalDateTime.now());
-        var token = VerificationToken.builder()
+        return VerificationToken.builder()
                 .appUser(appUser)
                 .expiryDate(expirationDate)
                 .token(generateToken(expirationDate, appUser.getEmail()))
                 .build();
-        appUser.setVerificationToken(token);
-        var emailContent = generateRegistrationEmailContext(token.getToken(), url);
-        emailSender.sendMail(appUser.getEmail(), emailContent);
-        return appUserService.addEntity(appUserPostDTO);
     }
 
     private String generateToken(LocalDateTime expiration, String userName) {

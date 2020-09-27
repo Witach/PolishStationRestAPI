@@ -11,7 +11,14 @@ public class SecurtiyConfigDev extends AbstractSecurityConfig {
     @Override
     HttpSecurity makeHttpChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .anyRequest().permitAll();
+                .antMatchers("/auth").permitAll()
+                .antMatchers("/app-user/register").permitAll()
+                .antMatchers("/app-user/verify/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/app-user").permitAll()
+                .antMatchers(HttpMethod.GET, "/**").authenticated()
+                .antMatchers("/app-user").authenticated()
+                .antMatchers("/app-user-role").authenticated()
+                .anyRequest().authenticated();
         return httpSecurity;
     }
 }
