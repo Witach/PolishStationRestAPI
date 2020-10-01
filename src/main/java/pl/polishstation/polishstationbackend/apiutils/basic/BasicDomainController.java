@@ -9,6 +9,7 @@ import java.util.List;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.CREATED;
 
+@CrossOrigin
 public abstract class BasicDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @Autowired

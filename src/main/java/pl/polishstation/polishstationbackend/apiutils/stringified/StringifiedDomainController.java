@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
-
+@CrossOrigin
 public class StringifiedDomainController<Domain, DomainDTO> {
 
     @Autowired

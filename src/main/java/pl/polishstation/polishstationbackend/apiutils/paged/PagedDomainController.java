@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.*;
-
+@CrossOrigin
 public abstract class PagedDomainController<Domain, DomainDTO, DomainPostDTO> {
     @Autowired
     PagedDomainService<Domain, DomainDTO, DomainPostDTO> service;

@@ -14,6 +14,7 @@ import static pl.polishstation.polishstationbackend.utils.JsonWebTokens.authToke
 
 @Slf4j
 @RestController
+@CrossOrigin
 @RequestMapping("/auth")
 public class AuthController {
     @Autowired

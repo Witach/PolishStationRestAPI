@@ -11,7 +11,7 @@ import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.CREATED;
-
+@CrossOrigin
 public abstract class FilterDomainController<Domain, DomainDTO, DomainPostDTO> {
     @Autowired
     FilterDomainService<Domain, DomainDTO, DomainPostDTO> service;
