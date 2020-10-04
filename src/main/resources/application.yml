@@ -1,6 +1,8 @@
 spring:
   profiles:
     active: dev
+  mvc:
+    static-path-pattern: '/static/**'
   mail:
     host: smtp.gmail.com
     port: 587

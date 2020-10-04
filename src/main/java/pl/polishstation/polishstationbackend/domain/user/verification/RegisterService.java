@@ -57,7 +57,7 @@ public class RegisterService {
             throw new TokenExpired();
         if(!validateToken(token, new UserDetailsImpl(appUser)))
             throw new WrongTokenData();
-        if(token.equals(appUser.getVerificationToken().getToken()))
+        if(!token.equals(appUser.getVerificationToken().getToken()))
             throw new WrongTokenData();
     }
 
@@ -91,7 +91,7 @@ public class RegisterService {
         var context = new Context();
         context.setVariable("header", "PolishStation");
         context.setVariable("title", "Verify your account");
-        context.setVariable("description", url + "/app-user/verify/" + token);
+        context.setVariable("description", url + "/verify/" + token);
         context.setVariable("link", url + "/logo.png");
         return templateEngine.process("template", context);
     }
