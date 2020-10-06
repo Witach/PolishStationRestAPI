@@ -37,6 +37,8 @@ public class AppUserFakeData {
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
 
+    private static final String PASSWORD_ENCRYPTION_TAG = "{noop}";
+
 
     public List<AppUser> fakeAppUsers(List<AppUserRole> appUserRoles) {
         return IntStream.range(0, 5)
@@ -53,7 +55,7 @@ public class AppUserFakeData {
                 .username(fakeUserName())
                 .verificationToken(token)
                 .isVerified(true)
-                .password(passwordEncoder.encode(faker.animal().name()))
+                .password(PASSWORD_ENCRYPTION_TAG + faker.animal().name())
                 .build();
         token.setAppUser(appUser);
         return appUser;

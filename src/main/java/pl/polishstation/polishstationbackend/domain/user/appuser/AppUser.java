@@ -50,7 +50,7 @@ public class AppUser extends BasicEntity {
 
     @NotNull
     @IsDefault
-    @ManyToMany(mappedBy = "appUsers")
+    @ManyToMany(mappedBy = "appUsers", fetch = FetchType.EAGER)
     private List<AppUserRole> appUserRoles = new LinkedList<>();
 
     @OneToMany(mappedBy = "user")

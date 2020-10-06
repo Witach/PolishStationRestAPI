@@ -1,7 +1,6 @@
 package pl.polishstation.polishstationbackend.auth.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,9 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import pl.polishstation.polishstationbackend.auth.JwtFilter;
-import pl.polishstation.polishstationbackend.auth.JwtUtils;
 import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsServiceImpl;
 
 public abstract class AbstractSecurityConfig extends WebSecurityConfigurerAdapter {
