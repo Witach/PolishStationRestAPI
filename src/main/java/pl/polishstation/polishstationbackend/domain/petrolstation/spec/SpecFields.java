@@ -1,15 +1,10 @@
 package pl.polishstation.polishstationbackend.domain.petrolstation.spec;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.MultiValueMap;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public enum SpecFields {
@@ -55,11 +50,17 @@ public enum SpecFields {
         return Arrays.stream(SpecFields.values())
                 .filter(name -> name.toString().equals(paramName))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(FieldNotFound::new);
     }
 
     @Override
     public String toString() {
         return fieldName;
+    }
+
+    static class FieldNotFound extends RuntimeException {
+        public FieldNotFound() {
+            super("filtring field not found");
+        }
     }
 }

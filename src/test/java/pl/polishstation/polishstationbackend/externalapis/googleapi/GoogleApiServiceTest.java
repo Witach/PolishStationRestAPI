@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
+import pl.polishstation.polishstationbackend.domain.localization.dto.LocalizationDTOMapper;
 
 import java.io.IOException;
 
@@ -17,6 +18,8 @@ class GoogleApiServiceTest {
     @Autowired
     GoogleApiService googleApiService;
     Localization localization;
+    @Autowired
+    LocalizationDTOMapper localizationDTOMapper;
 
     @BeforeEach
     void setUp() {
@@ -31,7 +34,7 @@ class GoogleApiServiceTest {
 
     @Test
     void getLocationOfLocalization() throws InterruptedException, ApiException, IOException {
-        var location = googleApiService.getLocationOfLocalization(localization);
+        var location = googleApiService.getLocationOfLocalization(localizationDTOMapper.convertIntoDTO(localization));
         assertNotNull(location);
         assertEquals(51.774519, location.get_long());
         assertEquals(19.4548889, location.getLat());

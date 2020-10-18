@@ -16,8 +16,8 @@ public class SpecFieldResolver {
         return params.get(field.toString());
     }
 
-    Integer getIntFieldValue() {
-        return Integer.parseInt(getFieldValue().get(0));
+    Double getIntFieldValue() {
+        return Double.parseDouble(getFieldValue().get(0));
     }
 
 

@@ -25,5 +25,6 @@ public class PetrolStationDTO {
     private PetrolStationStats petrolStationStats;
     private List<LastFuelPriceDTO> fuelPriceDTO;
     private List<String> fuelTypes;
+    private Double distance;
 }
 

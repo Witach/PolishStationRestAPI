@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.polishstation.polishstationbackend.domain.localization.dto.LocalizationDTO;
 
 @Data
 @Builder
@@ -19,6 +20,13 @@ public class Location {
 
     public double getRadiansLong() {
         return Math.toRadians(get_long());
+    }
+
+    public static Location parseLocalizationDTO(LocalizationDTO localizationDTO) {
+        return Location.builder()
+                .lat(Double.parseDouble(localizationDTO.getLat()))
+                ._long(Double.parseDouble(localizationDTO.get_long()))
+                .build();
     }
 
 }

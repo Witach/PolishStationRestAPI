@@ -14,7 +14,7 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PetrolStationStats implements CloneableEntity<PetrolStationStats> {
-    Integer avgOpinion;
+    Double avgOpinion;
     Long amountOfOpinion;
     Double avgPrice;
 

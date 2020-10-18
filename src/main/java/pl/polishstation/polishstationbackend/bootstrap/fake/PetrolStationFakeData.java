@@ -62,7 +62,7 @@ public class PetrolStationFakeData {
 
         var petrolStationStats = PetrolStationStats.builder()
                 .amountOfOpinion((long) opinions.size())
-                .avgOpinion(sum / opinions.size())
+                .avgOpinion((double)sum / (double) opinions.size())
                 .build();
 
         localization.setPetrolStation(petrolStation);

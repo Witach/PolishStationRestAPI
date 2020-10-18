@@ -6,6 +6,7 @@ import com.google.maps.model.GeocodingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
+import pl.polishstation.polishstationbackend.domain.localization.dto.LocalizationDTO;
 import pl.polishstation.polishstationbackend.utils.geo.Location;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ public class GoogleApiService {
     @Autowired
     GeoApiContext geoApiContext;
 
-    public Location getLocationOfLocalization(Localization localization) throws InterruptedException, ApiException, IOException {
+    public Location getLocationOfLocalization(LocalizationDTO localization) throws InterruptedException, ApiException, IOException {
         var results = geocode(geoApiContext, convertLocalizationToGeoString(localization)).await();
         return extractLocationFromResults(results);
     }
@@ -37,7 +38,7 @@ public class GoogleApiService {
                 .build();
     }
 
-    private String convertLocalizationToGeoString(Localization localization) {
+    private String convertLocalizationToGeoString(LocalizationDTO localization) {
         return format(LOCALIZATION_TEMPLATE,
                 localization.getProvince(),
                 localization.getName(),

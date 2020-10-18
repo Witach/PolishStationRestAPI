@@ -21,10 +21,14 @@ public class PetrolStationSpecFactory implements SpecificationFactory<PetrolStat
         var fields = Arrays.asList(SpecFields.values());
         Specification<PetrolStation> spec = Specification.where(null);
         for (String specField : filterParams.keySet()) {
-            SpecFields paramName = getSpecFieldOfParamName(specField);
-            var paramResolver = new SpecFieldResolver(filterParams, paramName);
-            var paramSpec = paramName.getFieldStrategy().apply(paramResolver);
-            spec = spec.and(paramSpec);
+            try {
+                SpecFields paramName = getSpecFieldOfParamName(specField);
+                var paramResolver = new SpecFieldResolver(filterParams, paramName);
+                var paramSpec = paramName.getFieldStrategy().apply(paramResolver);
+                spec = spec.and(paramSpec);
+            } catch (FieldNotFound ignored) {
+
+            }
         }
         return spec;
     }

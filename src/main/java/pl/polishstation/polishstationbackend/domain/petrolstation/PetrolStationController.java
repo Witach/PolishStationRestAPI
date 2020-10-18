@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.domain.petrolstation;
 
+import com.google.maps.errors.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolS
 
 import javax.validation.Valid;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -24,6 +26,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 @Loggable
 @RestController
 @RequestMapping("/petrol-station")
+@CrossOrigin
 public class PetrolStationController {
     @Autowired
     PetrolStationService service;
@@ -36,7 +39,7 @@ public class PetrolStationController {
 
     @ResponseStatus(OK)
     @GetMapping
-    public List<PetrolStationDTO> get(Sort sort, @RequestParam MultiValueMap<String, String> filtringParams) {
+    public List<PetrolStationDTO> get(Sort sort, @RequestParam MultiValueMap<String, String> filtringParams) throws InterruptedException, ApiException, IOException {
         return service.searchForPetrolStations(sort, filtringParams);
     }
 
