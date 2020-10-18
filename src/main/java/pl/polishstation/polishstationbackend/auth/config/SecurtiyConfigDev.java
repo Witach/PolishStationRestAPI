@@ -6,6 +6,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import java.util.List;
+
 @Profile("dev")
 @EnableWebSecurity
 public class SecurtiyConfigDev extends AbstractSecurityConfig {
@@ -18,8 +20,7 @@ public class SecurtiyConfigDev extends AbstractSecurityConfig {
     @Override
     HttpSecurity makeHttpChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/swagger-ui/**").permitAll()
+                .antMatchers(IGNORED_URLS.toArray(String[]::new)).permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/app-user/register").permitAll()
                 .antMatchers("/verify/{token}").permitAll()

@@ -2,6 +2,8 @@ package pl.polishstation.polishstationbackend.domain.petrolstation.entity;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
@@ -49,7 +51,8 @@ public class PetrolStation extends BasicEntity implements CloneableEntity<Petrol
     @OneToMany(mappedBy = "petrolStation", cascade = {CascadeType.REMOVE})
     private List<FuelPrice> fuelPrice = new LinkedList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+    @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(
             name = "fuel_type_petrol_station",
             joinColumns = { @JoinColumn(name = "fuel_type_id") },

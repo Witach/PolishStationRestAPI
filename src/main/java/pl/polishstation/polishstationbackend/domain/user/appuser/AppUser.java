@@ -1,6 +1,8 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser;
 
 import lombok.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
 import pl.polishstation.polishstationbackend.domain.user.appuser.validation.IsDefault;
@@ -50,7 +52,8 @@ public class AppUser extends BasicEntity {
 
     @NotNull
     @IsDefault
-    @ManyToMany(mappedBy = "appUsers", fetch = FetchType.EAGER)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(mappedBy = "appUsers")
     private List<AppUserRole> appUserRoles = new LinkedList<>();
 
     @OneToMany(mappedBy = "user")

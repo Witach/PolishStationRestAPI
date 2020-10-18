@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -13,7 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import pl.polishstation.polishstationbackend.auth.JwtFilter;
 import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsServiceImpl;
 
+import java.util.List;
+
 public abstract class AbstractSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    public static final List<String> IGNORED_URLS = List.of("/swagger-resources/**", "/swagger-ui.html", "/v3/api-docs", "/webjars/**", "/swagger-ui/**", "/h2-console/**");
 
     @Autowired
     protected UserDetailsServiceImpl myUserDetailsService;
