@@ -46,7 +46,6 @@ public class AppUser extends BasicEntity {
 
     //revert
 
-    @NotNull
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
     private VerificationToken verificationToken;
 
