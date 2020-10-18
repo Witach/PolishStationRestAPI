@@ -32,6 +32,10 @@ public interface PetrolStationDTOMapper extends BasicDomainDTOMapper<PetrolStati
                 .collect(Collectors.toList());
     }
 
+    default String fuelTypeToString(FuelType fuelType) {
+        return fuelType.getName();
+    }
+
     default List<FuelType> convertStringIntoFuelType(List<String> fuelTypeNames) {
         return fuelTypeNames.stream()
                 .map(FuelType::new)

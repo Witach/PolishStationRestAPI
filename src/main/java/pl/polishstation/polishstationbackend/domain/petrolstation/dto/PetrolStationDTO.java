@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.dto.FuelPriceDTO;
+import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
 import pl.polishstation.polishstationbackend.domain.localization.dto.LocalizationDTO;
@@ -23,5 +24,6 @@ public class PetrolStationDTO {
     private LocalizationDTO localization;
     private PetrolStationStats petrolStationStats;
     private List<LastFuelPriceDTO> fuelPriceDTO;
+    private List<String> fuelTypes;
 }
 

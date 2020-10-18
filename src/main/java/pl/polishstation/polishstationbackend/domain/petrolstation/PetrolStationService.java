@@ -3,7 +3,9 @@ package pl.polishstation.polishstationbackend.domain.petrolstation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceRepository;
@@ -13,6 +15,7 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStat
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
+import pl.polishstation.polishstationbackend.domain.petrolstation.spec.PetrolStationSpecFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +31,12 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
 
     @Autowired
     PetrolStationDTOMapper petrolStationDTOMapper;
+
+    @Autowired
+    PetrolStationSpecFactory petrolStationSpecFactory;
+
+    @Autowired
+    PetrolStationRepository petrolStationRepository;
 
     @Override
     public PetrolStationDTO addEntity(PetrolStationPostDTO dto) {
@@ -53,6 +62,12 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     List<LastFuelPriceDTO> getLastPricesOfFuelsForPetrolStation(PetrolStationDTO petrolStation) {
         return fuelPriceRepository.findLastPricesOfTypeOfPetrolStation(petrolStation.getId()).stream()
                 .map(petrolStationDTOMapper::convertIntoLastFuelPriceDTO)
+                .collect(Collectors.toList());
+    }
+
+    List<PetrolStationDTO> searchForPetrolStations(Sort sort, MultiValueMap<String, String> multiValueMap) {
+        return petrolStationRepository.findAll(petrolStationSpecFactory.specificationFrom(multiValueMap), sort).stream()
+                .map(petrolStationDTOMapper::convertIntoDTO)
                 .collect(Collectors.toList());
     }
 }
