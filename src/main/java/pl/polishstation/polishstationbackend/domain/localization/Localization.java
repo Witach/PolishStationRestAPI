@@ -17,7 +17,7 @@ import javax.validation.constraints.*;
 @Builder
 public class Localization extends BasicEntity implements CloneableEntity<Localization> {
 
-    @Size(min = 3, max= 64)
+    @Size(max= 64)
     @Column(length = 32)
     private String name;
 
@@ -25,12 +25,12 @@ public class Localization extends BasicEntity implements CloneableEntity<Localiz
     @Column(length = 32)
     private String street;
 
-    @Size(min = 1, max = 8)
-    @Column(length = 8)
+    @Size(max = 32)
+    @Column(length = 32)
     private String number;
 
-    @Pattern(regexp = "^[0-9][0-9]-[0-9][0-9][0-9]$", flags = Pattern.Flag.UNICODE_CASE)
-    @Column(length = 6)
+//    @Pattern(regexp = "^[0-9][0-9]-[0-9][0-9][0-9]$", flags = Pattern.Flag.UNICODE_CASE)
+    @Column(length = 24)
     private String postalCode;
 
     @DecimalMin("-90")

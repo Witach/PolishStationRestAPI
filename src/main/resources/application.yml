@@ -1,4 +1,5 @@
 spring:
+
   profiles:
     active: dev
   mvc:
@@ -17,6 +18,9 @@ spring:
           auth: true
           starttls:
             enable: true
+  devtools:
+    restart:
+      exclude: info/**
 
 
 jwt:
@@ -26,7 +30,7 @@ register:
 apis:
   infrastructure-fuel-station:
     uri: https://api.ure.gov.pl/api/InfrastructureFuelStation
-    file: ./info/PLInfrastructure.json
+    file: ./info/InfrastructureFuelStation.json
   google-api:
     api-key: AIzaSyBhzAitclN7qmw36iBq7a6KiboI_dVHrdg
 

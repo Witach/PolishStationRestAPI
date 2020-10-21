@@ -1,17 +1,23 @@
 package pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeService;
+import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
+import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 import pl.polishstation.polishstationbackend.exception.NoDataReceivedException;
-import pl.polishstation.polishstationbackend.utils.JsonWriter;
+import pl.polishstation.polishstationbackend.utils.JsonWriterReader;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -20,6 +26,12 @@ public class InfrastructureFuelStationService {
     public static String JSON_FILE_PATH;
 
     public static String URI;
+
+    @Value("${apis.infrastructure-fuel-station.mock.file}")
+    public  String fuelStationsFile;
+
+    @Value("${apis.infrastructure-fuel-station.mock.localization}")
+    public  String localizationForMock;
 
     RestTemplate restTemplate;
 
@@ -31,10 +43,10 @@ public class InfrastructureFuelStationService {
 
     private FuelTypeService fuelTypeService;
 
-    public JsonWriter jsonWriter;
+    public JsonWriterReader jsonWriter;
 
     @Autowired
-    public InfrastructureFuelStationService(LocalizationRepository localizationRepository, PetrolStationRepository petrolStationRepository, InfrastructureFuelStationFullConverter infrastructureFuelStationFullConverter, FuelTypeService fuelTypeService, JsonWriter jsonWriter) {
+    public InfrastructureFuelStationService(LocalizationRepository localizationRepository, PetrolStationRepository petrolStationRepository, InfrastructureFuelStationFullConverter infrastructureFuelStationFullConverter, FuelTypeService fuelTypeService, JsonWriterReader jsonWriter) {
         this.localizationRepository = localizationRepository;
         this.petrolStationRepository = petrolStationRepository;
         this.infrastructureFuelStationFullConverter = infrastructureFuelStationFullConverter;
@@ -48,12 +60,42 @@ public class InfrastructureFuelStationService {
                 .build();
     }
 
-    void getFullFuelStationInfoAndSaveIntoFile() {
+    public void getFullFuelStationInfoAndSaveIntoFile() {
         var data = getFullFuelStationsInfo();
         jsonWriter.writePojoToAFile(data, JSON_FILE_PATH);
     }
 
-    void getFullFuelStationInfoAndPersists() {
+    public void getFullFuelStationInfoAndSaveIntoFile(String localization) {
+        var data = getFullFuelStationsInfo();
+        var result = data.stream()
+                .filter( station -> filterLocalizationOfPetrolStaitonsFun(station, localization))
+                .collect(Collectors.toList());
+
+        jsonWriter.writePojoToAFile(result, JSON_FILE_PATH);
+    }
+
+    public boolean filterLocalizationOfPetrolStaitonsFun(InfrastructureFuelStationDTO infrastructureFuelStationDTO, String localization) {
+        List<Supplier<String>> lsitOfGetters = List.of(
+                infrastructureFuelStationDTO::getName,
+                infrastructureFuelStationDTO::getTown,
+                infrastructureFuelStationDTO::getAddress,
+                infrastructureFuelStationDTO::getRegionName,
+                infrastructureFuelStationDTO::getLocalization,
+                infrastructureFuelStationDTO::getPostOfficeName,
+                infrastructureFuelStationDTO::getPostOfficeAddress
+        );
+        return lsitOfGetters.stream()
+                .map(Supplier::get)
+                .anyMatch(value -> value.contains(localization));
+    }
+
+    public void loadFuelStationsFromFileAndPersist(String path) {
+        List<InfrastructureFuelStationDTO> list = jsonWriter.loadPojoFromAFile(path,new TypeReference<List<InfrastructureFuelStationDTO>>(){});
+        var petrolStations = infrastructureFuelStationFullConverter.convertIntoBidirectionalEntity(list);
+        petrolStationRepository.saveAll(petrolStations);
+    }
+
+    public void getFullFuelStationInfoAndPersists() {
         var data = getFullFuelStationsInfo();
         var petrolStations = infrastructureFuelStationFullConverter.convertIntoBidirectionalEntity(data);
         petrolStationRepository.saveAll(petrolStations);
@@ -61,7 +103,7 @@ public class InfrastructureFuelStationService {
 
     List<InfrastructureFuelStationDTO> getFullFuelStationsInfo() {
         var optResponse = Optional.ofNullable(
-                restTemplate.getForObject("", InfrastructureFuelStationDTO[].class)
+                restTemplate.getForObject("https://api.ure.gov.pl/api/InfrastructureFuelStation", InfrastructureFuelStationDTO[].class)
         );
         var response = optResponse.orElseThrow(NoDataReceivedException::new);
         return List.of(response);

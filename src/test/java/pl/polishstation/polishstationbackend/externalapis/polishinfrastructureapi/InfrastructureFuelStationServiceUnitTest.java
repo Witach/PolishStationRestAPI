@@ -13,10 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeService;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationDTO;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationFullConverter;
-import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationService;
-import pl.polishstation.polishstationbackend.utils.JsonWriter;
+import pl.polishstation.polishstationbackend.utils.JsonWriterReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +40,7 @@ class InfrastructureFuelStationServiceUnitTest {
     @Mock
     private FuelTypeService fuelTypeService;
     @Mock
-    private JsonWriter jsonWriter;
+    private JsonWriterReader jsonWriter;
     @Captor
     ArgumentCaptor<Object> argCaptor;
 

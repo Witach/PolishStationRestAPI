@@ -2,6 +2,8 @@ package pl.polishstation.polishstationbackend.bootstrap;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
@@ -17,13 +19,14 @@ import pl.polishstation.polishstationbackend.domain.opinion.OpinionRpository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserRepository;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
+import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationDTO;
+import pl.polishstation.polishstationbackend.externalapis.polishinfrastructureapi.InfrastructureFuelStationService;
 
 import static pl.polishstation.polishstationbackend.utils.FilterFunctions.filterAgainstNull;
 
 @Component
 @Slf4j
 @Profile("dev")
-@AllArgsConstructor
 @Order(3)
 public class DBFeed implements CommandLineRunner {
 
@@ -39,7 +42,27 @@ public class DBFeed implements CommandLineRunner {
     private AppUserRepository appUserRepository;
     private AppUserRoleRepository appUserRoleRepository;
     private LocalizationRepository localizationRepository;
+    private InfrastructureFuelStationService infrastructureFuelStationService;
 
+    @Value("${apis.infrastructure-fuel-station.mock.file}")
+    String mockFile;
+
+    @Autowired
+    public DBFeed(LocalizationFakeData localizationFakeData, OpinionFakeData opinionFakeData, AppUserFakeData appUserFakeData, FuelPriceFakeData fuelPriceFakeData, PetrolStationFakeData petrolStationFakeData, FuelTypeRepository fuelTypeRepository, FuelPriceRepository fuelPriceRepository, PetrolStationRepository petrolStationRepository, OpinionRpository opinionRpository, AppUserRepository appUserRepository, AppUserRoleRepository appUserRoleRepository, LocalizationRepository localizationRepository, InfrastructureFuelStationService infrastructureFuelStationService) {
+        this.localizationFakeData = localizationFakeData;
+        this.opinionFakeData = opinionFakeData;
+        this.appUserFakeData = appUserFakeData;
+        this.fuelPriceFakeData = fuelPriceFakeData;
+        this.petrolStationFakeData = petrolStationFakeData;
+        this.fuelTypeRepository = fuelTypeRepository;
+        this.fuelPriceRepository = fuelPriceRepository;
+        this.petrolStationRepository = petrolStationRepository;
+        this.opinionRpository = opinionRpository;
+        this.appUserRepository = appUserRepository;
+        this.appUserRoleRepository = appUserRoleRepository;
+        this.localizationRepository = localizationRepository;
+        this.infrastructureFuelStationService = infrastructureFuelStationService;
+    }
 
     @Override
     public void run(String... args) {
@@ -60,6 +83,7 @@ public class DBFeed implements CommandLineRunner {
         opinionRpository.saveAll(opinions);
         localizationRepository.saveAll(localizations);
         fuelPriceRepository.saveAll(fuelPrice);
+        infrastructureFuelStationService.loadFuelStationsFromFileAndPersist(mockFile);
     }
 
 

@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
-import pl.polishstation.polishstationbackend.utils.JsonWriter;
+import pl.polishstation.polishstationbackend.utils.JsonWriterReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,7 @@ class InfrastructureFuelStationServiceTest {
     FuelTypeRepository fuelTypeRepository;
 
     @Autowired
-    JsonWriter jsonWriter;
+    JsonWriterReader jsonWriter;
     @Value("${apis.infrastructure-fuel-station.file}")
     String pathToAFile;
 

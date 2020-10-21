@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:polish_station_db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  #    platform:
+  #      h2
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+  h2:
+    console:
+      enabled: true
+  flyway:
+    enabled: false
+  security:
+    user:
+      name:
+        admin
+      password:
+        '{noop}admin'
+debug: true
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+      hibernate: ERROR
+apis:
+  infrastructure-fuel-station:
+    mock:
+      file: "/info/LodzStations.json"
+      localization: "Lodz"

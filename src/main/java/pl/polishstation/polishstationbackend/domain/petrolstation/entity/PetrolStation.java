@@ -28,7 +28,7 @@ import java.util.List;
 public class PetrolStation extends BasicEntity implements CloneableEntity<PetrolStation> {
 
     @NotBlank
-    @Size(min = 3, max = 32)
+    @Size(max = 32)
     @Column(nullable = false, length = 128)
     private String name;
 

@@ -26,3 +26,8 @@ logging:
       springframework:
         web: DEBUG
       hibernate: ERROR
+apis:
+  infrastructure-fuel-station:
+    mock:
+      file: "./info/LodzStations.json"
+      localization: "Lodz"
