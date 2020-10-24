@@ -95,7 +95,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
 
     private void attachDefaultTypesToPetrolStation(PetrolStation petrolStation) {
         var defaultTypes = fuelTypeReposit.findAll().stream().filter(fuelType ->
-                FuelTypesNames.FUEL_TYPES_LIST.stream()
+                FuelTypesNames.DEFAULT_FUEL_TYPES_LIST.stream()
                         .map(String::toString)
                         .anyMatch(name -> name.equals(fuelType.getName()))
         ).collect(Collectors.toList());
@@ -142,7 +142,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         var newPetrols = Arrays.stream(googleQuerryResult)
                 .map(googleMapper::convertFromGoogleDto)
                 .peek(petrol -> addressFormater.decodeFormattedString(petrol.getLocalization()))
-                .filter(petrol -> this.isInListIfNotMerge(petrol, querryResult))
+                .filter(petrol -> !this.isInListIfNotMerge(petrol, querryResult))
                 .collect(Collectors.toList());
 
         newPetrols = newPetrols.stream()
@@ -169,9 +169,9 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
 
     public boolean isInListIfNotMerge(PetrolStationDTO newPetrol, List<PetrolStationDTO> petrolSatations) {
         var theSamePetrolOpt = petrolSatations.stream()
-                .filter(petrol -> !this.isTheSameLocation(petrol, newPetrol))
+                .filter(petrol -> this.isTheSameLocation(petrol, newPetrol))
                 .findFirst();
-        if(!theSamePetrolOpt.isPresent())
+        if(theSamePetrolOpt.isEmpty())
             return false;
 
         var theSamePetrol = theSamePetrolOpt.orElseThrow();
@@ -183,7 +183,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     public boolean  isTheSameLocation(PetrolStationDTO petrolStationDTO, PetrolStationDTO petrolStationDTO2) {
         if (isNull(petrolStationDTO.getLocalization().getFormattedAddress()))
             return false;
-        return petrolStationDTO.getLocalization().getFormattedAddress().equals(petrolStationDTO2) ||
+        return petrolStationDTO.getLocalization().getFormattedAddress().equals(petrolStationDTO2.getLocalization().getFormattedAddress()) ||
                 (petrolStationDTO.getLocalization().get_long().equals(petrolStationDTO2.getLocalization().get_long()) &&
                         petrolStationDTO.getLocalization().getLat().equals(petrolStationDTO2.getLocalization().getLat()));
     }
