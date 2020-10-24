@@ -14,6 +14,7 @@ public class LocalizationDTO {
     private String number;
     private String postalCode;
     private String province;
+    String formattedAddress;
 
     private String lat;
     @JsonProperty("long")

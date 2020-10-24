@@ -9,4 +9,5 @@ public class WWW {
     String www(){
         return "template";
     }
+
 }

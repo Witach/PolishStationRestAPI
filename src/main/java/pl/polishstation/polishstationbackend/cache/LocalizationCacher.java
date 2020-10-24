@@ -8,6 +8,7 @@ import pl.polishstation.polishstationbackend.utils.geo.Location;
 
 
 import static java.lang.Long.parseLong;
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -29,9 +30,10 @@ public class LocalizationCacher {
     }
 
     private boolean isLocalizationDifferent(final Localization localization, final Location location) {
-        return nonNull(localization.get_long()) &&
-                nonNull(localization.getLat()) &&
-                parseLong(localization.get_long()) != location.get_long() ||
+        if (isNull(localization.get_long()) &&
+                isNull(localization.getLat()))
+            return true;
+        return parseLong(localization.get_long()) != location.get_long() ||
                 parseLong(localization.getLat()) != location.getLat();
     }
 }

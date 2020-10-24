@@ -9,26 +9,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
-import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
+import pl.polishstation.polishstationbackend.cache.LocalizationCacher;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceRepository;
+import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
-import pl.polishstation.polishstationbackend.domain.localization.dto.LocalizationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.LastFuelPriceDTO;
+import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
-import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.spec.PetrolStationSpecFactory;
 import pl.polishstation.polishstationbackend.externalapis.googleapi.GoogleApiService;
+import pl.polishstation.polishstationbackend.externalapis.googleapi.GoogleMapper;
 import pl.polishstation.polishstationbackend.utils.geo.GeoCalculator;
 import pl.polishstation.polishstationbackend.utils.geo.Location;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static pl.polishstation.polishstationbackend.utils.geo.Location.parseLocalizationDTO;
 
 @Service
@@ -52,14 +55,39 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     @Autowired
     GoogleApiService googleApiService;
 
+    @Autowired
+    LocalizationCacher localizationCacher;
+
+    @Autowired
+    GoogleMapper googleMapper;
+
+    @Autowired
+    AddressFormater addressFormater;
+
     @Override
     public PetrolStationDTO addEntity(PetrolStationPostDTO dto) {
         var petrolStation = postDTOMapper.convertIntoObject(dto);
         var localization = petrolStation.getLocalization();
+        marshallAddressData(localization);
         localizationRepository.save(localization);
         petrolStation.setLocalization(localization);
         repository.save(petrolStation);
         return mapper.convertIntoDTO(petrolStation);
+    }
+
+    public PetrolStationDTO addEntity(PetrolStationDTO petrolStationDTO) {
+        var petrolStation = petrolStationDTOMapper.convertIntoObject(petrolStationDTO);
+        marshallAddressData(petrolStation.getLocalization());
+        var persistedLocalization = localizationRepository.save(petrolStation.getLocalization());
+        petrolStation.setLocalization(persistedLocalization);
+        persistedLocalization.setPetrolStation(petrolStation);
+        repository.save(petrolStation);
+        return mapper.convertIntoDTO(petrolStation);
+    }
+
+    public void marshallAddressData(Localization localization) {
+        var formattedAddress = addressFormater.formatAddressStringFromLocalization(localization);
+        localization.setFormattedAddress(formattedAddress);
     }
 
     @Override
@@ -84,12 +112,23 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .map(petrolStationDTOMapper::convertIntoDTO)
                 .collect(Collectors.toList());
 
-        if(Objects.isNull(multiValueMap.getFirst("lat")))
+
+        if(isNull(multiValueMap.getFirst("lat")))
             return querryResult;
 
         var userLocation = getUserLocation(multiValueMap);
         var maxDistance = Double.parseDouble(Objects.requireNonNull(multiValueMap.getFirst("maxDistance")));
-        if(sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
+
+        var googleQuerryResult = googleApiService.getPetrolStationsOfPosition(userLocation, (int)Math.round(maxDistance)).results;
+        var newPetrols = Arrays.stream(googleQuerryResult)
+                .map(googleMapper::convertFromGoogleDto)
+                .filter(petrol -> this.isInList(petrol, querryResult))
+                .collect(Collectors.toList());
+
+        newPetrols.forEach(this::addEntity);
+        querryResult.addAll(newPetrols);
+
+        if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
             return querryResult.stream()
                     .map(this::fetchGeoPositionIfNotExists)
                     .filter((petrolStationDTO) -> this.verifyUserDistance(petrolStationDTO, userLocation, maxDistance))
@@ -103,6 +142,20 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .collect(Collectors.toList());
     }
 
+
+    public boolean isInList(PetrolStationDTO newPetrol, List<PetrolStationDTO> petrolSatations) {
+        return petrolSatations.stream()
+                .noneMatch(petrol -> this.isTheSameLocation(petrol, newPetrol));
+    }
+
+    public boolean  isTheSameLocation(PetrolStationDTO petrolStationDTO, PetrolStationDTO petrolStationDTO2) {
+        if (isNull(petrolStationDTO.getLocalization().getFormattedAddress()))
+            return false;
+        return petrolStationDTO.getLocalization().getFormattedAddress().equals(petrolStationDTO2) ||
+                (petrolStationDTO.getLocalization().get_long().equals(petrolStationDTO2.getLocalization().get_long()) &&
+                        petrolStationDTO.getLocalization().getLat().equals(petrolStationDTO2.getLocalization().getLat()));
+    }
+
     int compareDistances(PetrolStationDTO distanceA, PetrolStationDTO distanceB) {
         if (distanceA.getDistance().equals(distanceB.getDistance()))
             return 0;
@@ -113,12 +166,13 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
 
     PetrolStationDTO fetchGeoPositionIfNotExists(PetrolStationDTO petrolStationDTO) {
         try {
-            if (Objects.isNull(petrolStationDTO.getLocalization().get_long())){
+            if (isNull(petrolStationDTO.getLocalization().get_long())){
                 var location = googleApiService.getLocationOfLocalization(petrolStationDTO.getLocalization());
                 petrolStationDTO.getLocalization().set_long(location.get_long().toString());
                 petrolStationDTO.getLocalization().setLat(location.getLat().toString());
                 var petrolStaionToPersits = repository.findById(petrolStationDTO.getId()).orElseThrow();
-                repository.save(petrolStaionToPersits);
+                marshallAddressData(petrolStaionToPersits.getLocalization());
+                localizationCacher.cacheLocalizationInfo(petrolStaionToPersits.getLocalization(), location);
             }
         } catch (InterruptedException | ApiException | IOException e) {
             e.printStackTrace();

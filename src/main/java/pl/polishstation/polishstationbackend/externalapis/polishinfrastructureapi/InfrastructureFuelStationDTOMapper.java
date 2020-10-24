@@ -12,8 +12,7 @@ public abstract class InfrastructureFuelStationDTOMapper {
             @Mapping(target = "localization.province", source = "regionName"),
             @Mapping(target = "localization.name", source = "town"),
             @Mapping(target = "name", source = "fuelStationName"),
-            @Mapping(target = "localization.street", source = "street"),
-            @Mapping(target = "localization.number", source = "localNumber"),
+            @Mapping(target = "localization.street", source = "address"),
             @Mapping(target = "localization.postalCode", source = "addressCode"),
     })
     public abstract PetrolStation convertIntoObject(InfrastructureFuelStationDTO dto);

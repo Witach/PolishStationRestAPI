@@ -35,21 +35,22 @@ public class Localization extends BasicEntity implements CloneableEntity<Localiz
 
     @DecimalMin("-90")
     @DecimalMax("90")
-    @Column(length = 8)
+    @Column(length = 32)
     private String lat;
 
     @DecimalMin("-180")
     @DecimalMax("180")
-    @Column(name = "long", length = 8)
+    @Column(name = "long", length = 32)
     private String _long;
 
     @Size(min = 3, max= 64)
     @Column(length = 32)
     private String province;
 
+    String formattedAddress;
+
     //revert
 
-    @NotNull
     @OneToOne(optional = false, mappedBy = "localization")
     private PetrolStation petrolStation;
 
