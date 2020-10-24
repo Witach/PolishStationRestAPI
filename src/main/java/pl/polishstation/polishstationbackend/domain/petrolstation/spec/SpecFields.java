@@ -11,10 +11,16 @@ public enum SpecFields {
     FUEL_TYPE(
             "fuelType",
             (resolver) ->
-                    (root, criteriaQuery, criteriaBuilder) ->
-                        root.join("fuelTypes", JoinType.LEFT)
-                                .get("name")
-                                .in(resolver.getFieldValue())
+                    (root, criteriaQuery, criteriaBuilder) -> {
+                        var join = root.join("fuelTypes", JoinType.LEFT);
+                        if(!join.getJoins().isEmpty()) {
+                            return join.join("fuelTypes", JoinType.LEFT)
+                                    .get("name")
+                                    .in(resolver.getFieldValue());
+                        } else {
+                            return criteriaBuilder.and();
+                        }
+                    }
     ),
     AVG_OPINION(
             "avgOpinion",

@@ -12,6 +12,9 @@ import org.springframework.util.MultiValueMap;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
 import pl.polishstation.polishstationbackend.cache.LocalizationCacher;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceRepository;
+import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
+import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
+import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.LastFuelPriceDTO;
@@ -64,6 +67,9 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     @Autowired
     AddressFormater addressFormater;
 
+    @Autowired
+    FuelTypeRepository fuelTypeReposit;
+
     @Override
     public PetrolStationDTO addEntity(PetrolStationPostDTO dto) {
         var petrolStation = postDTOMapper.convertIntoObject(dto);
@@ -71,6 +77,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         marshallAddressData(localization);
         localizationRepository.save(localization);
         petrolStation.setLocalization(localization);
+        attachDefaultTypesToPetrolStation(petrolStation);
         repository.save(petrolStation);
         return mapper.convertIntoDTO(petrolStation);
     }
@@ -81,13 +88,25 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         var persistedLocalization = localizationRepository.save(petrolStation.getLocalization());
         petrolStation.setLocalization(persistedLocalization);
         persistedLocalization.setPetrolStation(petrolStation);
-        repository.save(petrolStation);
+        attachDefaultTypesToPetrolStation(petrolStation);
+        petrolStation = repository.save(petrolStation);
         return mapper.convertIntoDTO(petrolStation);
+    }
+
+    private void attachDefaultTypesToPetrolStation(PetrolStation petrolStation) {
+        var defaultTypes = fuelTypeReposit.findAll().stream().filter(fuelType ->
+                FuelTypesNames.FUEL_TYPES_LIST.stream()
+                        .map(String::toString)
+                        .anyMatch(name -> name.equals(fuelType.getName()))
+        ).collect(Collectors.toList());
+        petrolStation.setFuelTypes(defaultTypes);
+        defaultTypes.forEach(fuelType -> fuelType.getPetrolStations().add(petrolStation));
     }
 
     public void marshallAddressData(Localization localization) {
         var formattedAddress = addressFormater.formatAddressStringFromLocalization(localization);
         localization.setFormattedAddress(formattedAddress);
+        addressFormater.decodeFormattedString(localization);
     }
 
     @Override
@@ -122,10 +141,14 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         var googleQuerryResult = googleApiService.getPetrolStationsOfPosition(userLocation, (int)Math.round(maxDistance)).results;
         var newPetrols = Arrays.stream(googleQuerryResult)
                 .map(googleMapper::convertFromGoogleDto)
-                .filter(petrol -> this.isInList(petrol, querryResult))
+                .peek(petrol -> addressFormater.decodeFormattedString(petrol.getLocalization()))
+                .filter(petrol -> this.isInListIfNotMerge(petrol, querryResult))
                 .collect(Collectors.toList());
 
-        newPetrols.forEach(this::addEntity);
+        newPetrols = newPetrols.stream()
+                .map(this::addEntity)
+                .collect(Collectors.toList());
+
         querryResult.addAll(newPetrols);
 
         if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
@@ -143,9 +166,18 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     }
 
 
-    public boolean isInList(PetrolStationDTO newPetrol, List<PetrolStationDTO> petrolSatations) {
-        return petrolSatations.stream()
-                .noneMatch(petrol -> this.isTheSameLocation(petrol, newPetrol));
+
+    public boolean isInListIfNotMerge(PetrolStationDTO newPetrol, List<PetrolStationDTO> petrolSatations) {
+        var theSamePetrolOpt = petrolSatations.stream()
+                .filter(petrol -> !this.isTheSameLocation(petrol, newPetrol))
+                .findFirst();
+        if(!theSamePetrolOpt.isPresent())
+            return false;
+
+        var theSamePetrol = theSamePetrolOpt.orElseThrow();
+        theSamePetrol.getLocalization().setLat(theSamePetrol.getLocalization().getLat());
+        theSamePetrol.getLocalization().set_long(theSamePetrol.getLocalization().get_long());
+        return true;
     }
 
     public boolean  isTheSameLocation(PetrolStationDTO petrolStationDTO, PetrolStationDTO petrolStationDTO2) {
@@ -172,6 +204,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 petrolStationDTO.getLocalization().setLat(location.getLat().toString());
                 var petrolStaionToPersits = repository.findById(petrolStationDTO.getId()).orElseThrow();
                 marshallAddressData(petrolStaionToPersits.getLocalization());
+
                 localizationCacher.cacheLocalizationInfo(petrolStaionToPersits.getLocalization(), location);
             }
         } catch (InterruptedException | ApiException | IOException e) {

@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeService;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
+import pl.polishstation.polishstationbackend.domain.petrolstation.AddressFormater;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 import pl.polishstation.polishstationbackend.exception.NoDataReceivedException;
@@ -44,6 +45,9 @@ public class InfrastructureFuelStationService {
     private FuelTypeService fuelTypeService;
 
     public JsonWriterReader jsonWriter;
+
+    @Autowired
+    public AddressFormater addressFormater;
 
     @Autowired
     public InfrastructureFuelStationService(LocalizationRepository localizationRepository, PetrolStationRepository petrolStationRepository, InfrastructureFuelStationFullConverter infrastructureFuelStationFullConverter, FuelTypeService fuelTypeService, JsonWriterReader jsonWriter) {
@@ -92,6 +96,10 @@ public class InfrastructureFuelStationService {
     public void loadFuelStationsFromFileAndPersist(String path) {
         List<InfrastructureFuelStationDTO> list = jsonWriter.loadPojoFromAFile(path,new TypeReference<List<InfrastructureFuelStationDTO>>(){});
         var petrolStations = infrastructureFuelStationFullConverter.convertIntoBidirectionalEntity(list);
+        petrolStations.forEach(petrolStation ->  {
+                    var formattedString = addressFormater.formatAddressStringFromLocalization(petrolStation.getLocalization());
+                    petrolStation.getLocalization().setFormattedAddress(formattedString);
+                });
         petrolStationRepository.saveAll(petrolStations);
     }
 

@@ -83,7 +83,7 @@ public class DBFeed implements CommandLineRunner {
         opinionRpository.saveAll(opinions);
         localizationRepository.saveAll(localizations);
         fuelPriceRepository.saveAll(fuelPrice);
-        infrastructureFuelStationService.loadFuelStationsFromFileAndPersist(mockFile);
+//        infrastructureFuelStationService.loadFuelStationsFromFileAndPersist(mockFile);
     }
 
 

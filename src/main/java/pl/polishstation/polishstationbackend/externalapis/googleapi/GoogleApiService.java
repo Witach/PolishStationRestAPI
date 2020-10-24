@@ -41,7 +41,7 @@ public class GoogleApiService {
     public PlacesSearchResponse getPetrolStationsOfPosition(Location userLocation, int range) throws InterruptedException, ApiException, IOException {
         return  textSearchQuery(geoApiContext, PlaceType.GAS_STATION)
                 .location(new LatLng(userLocation.getLat(), userLocation.get_long()))
-                .radius(range)
+                .radius(range * 1000)
                 .await();
     }
 
