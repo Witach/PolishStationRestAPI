@@ -19,4 +19,9 @@ public class PetrolStationPostDTO {
     @NotNull
     private LocalizationPostDTO localization;
     private List<String> fuelTypes;
+    Boolean isWCFree;
+    Boolean isWC;
+    Boolean isRestaurant;
+    Boolean isCompressor;
+    Boolean isCarWash;
 }

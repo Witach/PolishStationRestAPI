@@ -21,7 +21,7 @@ public class Localization extends BasicEntity implements CloneableEntity<Localiz
     @Column(length = 32)
     private String name;
 
-    @Column(length = 32)
+    @Column(length = 64)
     private String street;
 
     @Size(max = 32)

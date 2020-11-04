@@ -17,6 +17,12 @@ public class PetrolStationStats implements CloneableEntity<PetrolStationStats> {
     Double avgOpinion;
     Long amountOfOpinion;
     Double avgPrice;
+    Boolean isHotDogs = false;
+    Boolean isWCFree = false;
+    Boolean isWC = false;
+    Boolean isRestaurant = false;
+    Boolean isCompressor = false;
+    Boolean isCarWash = false;
 
     @Override
     public PetrolStationStats cloneEntity() {

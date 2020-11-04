@@ -22,6 +22,7 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStat
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
+import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStationStats;
 import pl.polishstation.polishstationbackend.domain.petrolstation.spec.PetrolStationSpecFactory;
 import pl.polishstation.polishstationbackend.externalapis.googleapi.GoogleApiService;
 import pl.polishstation.polishstationbackend.externalapis.googleapi.GoogleMapper;
@@ -89,6 +90,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         petrolStation.setLocalization(persistedLocalization);
         persistedLocalization.setPetrolStation(petrolStation);
         attachDefaultTypesToPetrolStation(petrolStation);
+        petrolStation.setPetrolStationStats(new PetrolStationStats());
         petrolStation = repository.save(petrolStation);
         return mapper.convertIntoDTO(petrolStation);
     }
