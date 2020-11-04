@@ -17,6 +17,10 @@ import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeReposi
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
+import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
+import pl.polishstation.polishstationbackend.domain.opinion.OpinionRpository;
+import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
+import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTOMapper;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.LastFuelPriceDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
@@ -70,6 +74,12 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
 
     @Autowired
     FuelTypeRepository fuelTypeReposit;
+
+    @Autowired
+    OpinionRpository opinionRpository;
+
+    @Autowired
+    OpinionDTOMapper opinionDTOMapper;
 
     @Override
     public PetrolStationDTO addEntity(PetrolStationPostDTO dto) {
@@ -233,6 +243,12 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 ._long(_long)
                 .lat(lat)
                 .build();
+    }
+
+    public List<OpinionDTO> getLatestOpinionsOfPetrolStation(Long id) {
+        return opinionRpository.findAllByPetrolStationId(id).stream()
+                .map(opinionDTOMapper::convertIntoDTO)
+                .collect(Collectors.toList());
     }
 
     @Data

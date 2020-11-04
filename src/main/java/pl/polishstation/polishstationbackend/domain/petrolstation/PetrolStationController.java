@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
 import pl.polishstation.polishstationbackend.apiutils.paged.PagedDomainController;
 import pl.polishstation.polishstationbackend.aspect.Loggable;
+import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
+import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
@@ -59,5 +61,11 @@ public class PetrolStationController {
     @PostMapping
     public PetrolStationDTO post(@Valid @RequestBody PetrolStationPostDTO dto) {
         return service.addEntity(dto);
+    }
+
+    @ResponseStatus(OK)
+    @GetMapping("/{id}/opinions")
+    public List<OpinionDTO> getLatestOpinions(@PathVariable Long id) {
+        return service.getLatestOpinionsOfPetrolStation(id);
     }
 }
