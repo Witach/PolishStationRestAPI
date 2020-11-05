@@ -24,4 +24,5 @@ public class PetrolStationPostDTO {
     Boolean isRestaurant;
     Boolean isCompressor;
     Boolean isCarWash;
+    Boolean isHotDogs;
 }

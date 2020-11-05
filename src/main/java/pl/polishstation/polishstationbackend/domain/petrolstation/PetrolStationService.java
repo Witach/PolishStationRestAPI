@@ -177,7 +177,27 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void updateEntity(PetrolStationPostDTO petrolStationPostDTO, Long id) {
+        var station = postDTOMapper.convertIntoObject(petrolStationPostDTO);
 
+        var fuelTypes = station.getFuelTypes().stream()
+                .map(fuelType -> fuelTypeReposit.findByName(fuelType.getName()).orElseThrow())
+                .collect(Collectors.toList());
+        station.setFuelTypes(fuelTypes);
+
+        var stationRep = repository.findById(id).orElseThrow();
+        stationRep.setFuelTypes(fuelTypes);
+        stationRep.getPetrolStationStats().setIsCarWash(petrolStationPostDTO.getIsCarWash());
+        stationRep.getPetrolStationStats().setIsCompressor(petrolStationPostDTO.getIsCompressor());
+        stationRep.getPetrolStationStats().setIsHotDogs(petrolStationPostDTO.getIsHotDogs());
+        stationRep.getPetrolStationStats().setIsRestaurant(petrolStationPostDTO.getIsRestaurant());
+        stationRep.getPetrolStationStats().setIsWC(petrolStationPostDTO.getIsWC());
+        stationRep.getPetrolStationStats().setIsWCFree(petrolStationPostDTO.getIsWCFree());
+
+
+        repository.save(stationRep);
+    }
 
     public boolean isInListIfNotMerge(PetrolStationDTO newPetrol, List<PetrolStationDTO> petrolSatations) {
         var theSamePetrolOpt = petrolSatations.stream()
