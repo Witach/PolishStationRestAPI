@@ -168,12 +168,20 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                     .map(this::fetchGeoPositionIfNotExists)
                     .filter((petrolStationDTO) -> this.verifyUserDistance(petrolStationDTO, userLocation, maxDistance))
                     .sorted(this::compareDistances)
+                    .peek(petrolStationDTO -> {
+                        var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
+                        petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
+                    })
                     .collect(Collectors.toList());
         }
 
         return querryResult.stream()
                 .map(this::fetchGeoPositionIfNotExists)
                 .filter((petrolStationDTO) -> this.verifyUserDistance(petrolStationDTO, userLocation, maxDistance))
+                .peek(petrolStationDTO -> {
+                    var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
+                    petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -269,6 +277,14 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         return opinionRpository.findAllByPetrolStationId(id).stream()
                 .map(opinionDTOMapper::convertIntoDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PetrolStationDTO getEntityById(Long id) {
+        var petrolStationDTO = super.getEntityById(id);
+        var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
+        petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
+        return petrolStationDTO;
     }
 
     @Data
