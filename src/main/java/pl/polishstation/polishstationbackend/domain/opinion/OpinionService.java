@@ -5,8 +5,13 @@ import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionPostDTO;
+import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
+import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserRepository;
 
+import javax.transaction.Transactional;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +23,40 @@ public class OpinionService extends BasicDomainService<Opinion, OpinionDTO, Opin
 
     @Autowired
     OpinionRpository opinionRpository;
+
+    @Autowired
+    PetrolStationRepository petrolStationRepository;
+
+    @Override
+    public OpinionDTO addEntity(OpinionPostDTO opinionPostDTO) {
+        var opionionDTO = super.addEntity(opinionPostDTO);
+        updateAvgOpinion(opinionPostDTO);
+        return opionionDTO;
+    }
+
+    @Transactional
+    public void updateAvgOpinion(OpinionPostDTO opinionPostDTO) {
+        var petrolStation = petrolStationRepository.findById(opinionPostDTO.getPetrolStationId())
+                .orElseThrow();
+
+        var sumOfOpinions = petrolStation.getOpinions().stream()
+                .mapToDouble(opinion -> (double)opinion.getMark())
+                .reduce(0, Double::sum);
+
+        var countOfOpinion = petrolStation.getOpinions().size();
+
+        double res = roundToSecondDecimal(sumOfOpinions / (double) countOfOpinion);
+        petrolStation.getPetrolStationStats().setAvgOpinion(res);
+        petrolStation.getPetrolStationStats().setAmountOfOpinion((long) countOfOpinion);
+        petrolStationRepository.save(petrolStation);
+    }
+
+    private double roundToSecondDecimal(double number) {
+        var df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        var formated = df.format(number);
+        return Double.parseDouble(formated);
+    }
 
     public List<OpinionDTO> getUsersOpinion(String email) {
         var user = appUserRepository.findAppUserByEmailEquals(email).orElseThrow();
