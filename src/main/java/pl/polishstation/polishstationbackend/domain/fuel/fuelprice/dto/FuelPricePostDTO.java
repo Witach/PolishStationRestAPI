@@ -14,9 +14,6 @@ public class FuelPricePostDTO {
     @Positive
     private Double price;
 
-    @PastOrPresent
-    private LocalDateTime date;
-
     @SessionOwner
     private Long appUserId;
 

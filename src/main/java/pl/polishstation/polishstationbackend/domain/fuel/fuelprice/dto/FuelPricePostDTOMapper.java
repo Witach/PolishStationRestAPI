@@ -29,7 +29,6 @@ public class FuelPricePostDTOMapper implements BasicDomainPostDTOMapper<FuelPric
                 .orElseThrow(EntityDoesNotExists::new);
         return FuelPrice.builder()
                 .fuelType(fuelType)
-                .date(fuelPricePostDTO.getDate())
                 .price(fuelPricePostDTO.getPrice())
                 .petrolStation(petrolStation)
                 .user(appUser)
