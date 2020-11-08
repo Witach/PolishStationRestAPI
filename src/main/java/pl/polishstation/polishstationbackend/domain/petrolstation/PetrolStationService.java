@@ -172,6 +172,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                         var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
                         petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
                     })
+                    .distinct()
                     .collect(Collectors.toList());
         }
 
@@ -182,6 +183,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                     var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
                     petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
                 })
+                .distinct()
                 .collect(Collectors.toList());
     }
 
