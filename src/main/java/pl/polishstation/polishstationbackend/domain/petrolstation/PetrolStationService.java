@@ -86,9 +86,11 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         var petrolStation = postDTOMapper.convertIntoObject(dto);
         var localization = petrolStation.getLocalization();
         marshallAddressData(localization);
+        this.fetchGeoPositionIfNotExists(petrolStation);
         localizationRepository.save(localization);
         petrolStation.setLocalization(localization);
         attachDefaultTypesToPetrolStation(petrolStation);
+        petrolStation.setPetrolStationStats(new PetrolStationStats());
         repository.save(petrolStation);
         return mapper.convertIntoDTO(petrolStation);
     }
@@ -248,6 +250,19 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 marshallAddressData(petrolStaionToPersits.getLocalization());
 
                 localizationCacher.cacheLocalizationInfo(petrolStaionToPersits.getLocalization(), location);
+            }
+        } catch (InterruptedException | ApiException | IOException e) {
+            e.printStackTrace();
+        }
+        return petrolStationDTO;
+    }
+
+    PetrolStation fetchGeoPositionIfNotExists(PetrolStation petrolStationDTO) {
+        try {
+            if (isNull(petrolStationDTO.getLocalization().get_long())){
+                var location = googleApiService.getLocationOfLocalization(petrolStationDTO.getLocalization());
+                petrolStationDTO.getLocalization().set_long(location.get_long().toString());
+                petrolStationDTO.getLocalization().setLat(location.getLat().toString());
             }
         } catch (InterruptedException | ApiException | IOException e) {
             e.printStackTrace();

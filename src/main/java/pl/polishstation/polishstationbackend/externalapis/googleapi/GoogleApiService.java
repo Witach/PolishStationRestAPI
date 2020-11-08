@@ -6,6 +6,7 @@ import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
@@ -38,6 +39,11 @@ public class GoogleApiService {
         return extractLocationFromResults(results);
     }
 
+    public Location getLocationOfLocalization(Localization localization) throws InterruptedException, ApiException, IOException {
+        var results = geocode(geoApiContext, convertLocalizationToGeoString(localization)).await();
+        return extractLocationFromResults(results);
+    }
+
     public PlacesSearchResponse getPetrolStationsOfPosition(Location userLocation, int range) throws InterruptedException, ApiException, IOException {
         return  textSearchQuery(geoApiContext, PlaceType.GAS_STATION)
                 .location(new LatLng(userLocation.getLat(), userLocation.get_long()))
@@ -53,6 +59,23 @@ public class GoogleApiService {
     }
 
     private String convertLocalizationToGeoString(LocalizationDTO localization) {
+        if(isNull(localization.getStreet()) || localization.getStreet().length() < 1) {
+            return format(LOCALIZATION_TEMPLATE,
+                    localization.getProvince(),
+                    localization.getName(),
+                    localization.getStreet(),
+                    "");
+        } else {
+            return format(LOCALIZATION_TEMPLATE,
+                    localization.getProvince(),
+                    localization.getName(),
+                    localization.getStreet(),
+                    localization.getNumber());
+        }
+
+    }
+
+    private String convertLocalizationToGeoString(Localization localization) {
         if(isNull(localization.getStreet()) || localization.getStreet().length() < 1) {
             return format(LOCALIZATION_TEMPLATE,
                     localization.getProvince(),
