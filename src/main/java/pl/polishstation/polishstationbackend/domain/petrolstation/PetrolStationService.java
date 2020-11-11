@@ -206,6 +206,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         stationRep.getPetrolStationStats().setIsRestaurant(petrolStationPostDTO.getIsRestaurant());
         stationRep.getPetrolStationStats().setIsWC(petrolStationPostDTO.getIsWC());
         stationRep.getPetrolStationStats().setIsWCFree(petrolStationPostDTO.getIsWCFree());
+        stationRep.getPetrolStationStats().setIsSelfService(petrolStationPostDTO.getIsSelfService());
 
 
         repository.save(stationRep);

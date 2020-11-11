@@ -23,6 +23,7 @@ public class PetrolStationStats implements CloneableEntity<PetrolStationStats> {
     Boolean isRestaurant = false;
     Boolean isCompressor = false;
     Boolean isCarWash = false;
+    Boolean isSelfService = false;
 
     @Override
     public PetrolStationStats cloneEntity() {
