@@ -56,6 +56,7 @@ public class AppUserFakeData {
                 .verificationToken(token)
                 .isVerified(true)
                 .password(PASSWORD_ENCRYPTION_TAG + faker.animal().name())
+                .amountOfPoints(0L)
                 .build();
         token.setAppUser(appUser);
         return appUser;

@@ -17,4 +17,5 @@ public class AppUserDTO {
     private Long id;
     private List<String> appUserRoles;
     private Boolean isVerified;
+    private Long amountOfPoints;
 }

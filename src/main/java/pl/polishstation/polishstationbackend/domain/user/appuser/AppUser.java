@@ -44,6 +44,8 @@ public class AppUser extends BasicEntity {
     @Column(name = "is_verified", nullable = false)
     private Boolean isVerified = false;
 
+    private Long amountOfPoints = 0L;
+
     //revert
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
