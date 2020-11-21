@@ -32,6 +32,7 @@ public class DefaultUserPersister implements CommandLineRunner {
                 .email("witaszek98@wp.pl")
                 .password("{noop}#Ptys123")
                 .username("witszek98")
+                .amountOfPoints(0L)
                 .isVerified(true)
                 .appUserRoles(List.of(defaultRole))
                 .build();
