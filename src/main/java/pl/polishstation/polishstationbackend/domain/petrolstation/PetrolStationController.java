@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
 import pl.polishstation.polishstationbackend.apiutils.paged.PagedDomainController;
 import pl.polishstation.polishstationbackend.aspect.Loggable;
+import pl.polishstation.polishstationbackend.aspect.ScorePoints;
 import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
@@ -45,6 +46,7 @@ public class PetrolStationController {
         return service.searchForPetrolStations(sort, filtringParams);
     }
 
+    @ScorePoints
     @ResponseStatus(CREATED)
     @PatchMapping("/{id}")
     public void update(@Valid @RequestBody PetrolStationPostDTO dto, @PathVariable Long id) {
@@ -57,6 +59,7 @@ public class PetrolStationController {
         service.deleteEntity(id);
     }
 
+    @ScorePoints
     @ResponseStatus(CREATED)
     @PostMapping
     public PetrolStationDTO post(@Valid @RequestBody PetrolStationPostDTO dto) {

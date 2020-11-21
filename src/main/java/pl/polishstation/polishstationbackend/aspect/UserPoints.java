@@ -19,8 +19,11 @@ public class UserPoints {
 
     @After("@annotation(ScorePoints)")
     public void scoreThePoints() {
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getDetails();
-        var appUser = appUserRepository.findById(userDetails.getUserId()).orElseThrow(EntityExistsException::new);
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var appUser = appUserRepository.findAppUserByEmailEquals(userDetails.getUsername()).orElseThrow(EntityExistsException::new);
+        if(appUser.getAmountOfPoints() == null) {
+            appUser.setAmountOfPoints(0L);
+        }
         if(appUser.getAmountOfPoints() < 500) {
             appUser.setAmountOfPoints(appUser.getAmountOfPoints() + 5);
             appUserRepository.save(appUser);

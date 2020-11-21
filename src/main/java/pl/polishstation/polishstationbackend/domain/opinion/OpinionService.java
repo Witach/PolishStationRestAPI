@@ -3,6 +3,7 @@ package pl.polishstation.polishstationbackend.domain.opinion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
+import pl.polishstation.polishstationbackend.aspect.ScorePoints;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
@@ -27,6 +28,7 @@ public class OpinionService extends BasicDomainService<Opinion, OpinionDTO, Opin
     @Autowired
     PetrolStationRepository petrolStationRepository;
 
+    @ScorePoints
     @Override
     public OpinionDTO addEntity(OpinionPostDTO opinionPostDTO) {
         var opionionDTO = super.addEntity(opinionPostDTO);
