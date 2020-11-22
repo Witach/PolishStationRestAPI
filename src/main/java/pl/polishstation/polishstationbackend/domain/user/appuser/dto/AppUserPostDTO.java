@@ -14,13 +14,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class AppUserPostDTO {
-    @NotBlank
-    @Size(min = 3, max = 32)
     private String username;
-    @NotBlank
-    @Email
     private String email;
-    @NotBlank
-    @Size(min = 8, max = 32)
     private String password;
 }

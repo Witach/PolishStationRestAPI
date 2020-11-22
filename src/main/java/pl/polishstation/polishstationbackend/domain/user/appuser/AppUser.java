@@ -46,6 +46,9 @@ public class AppUser extends BasicEntity {
 
     private Long amountOfPoints = 0L;
 
+    private Long amountOfCreatedStations = 0L;
+    private Long amountOfEditedInformations = 0L;
+
     //revert
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)

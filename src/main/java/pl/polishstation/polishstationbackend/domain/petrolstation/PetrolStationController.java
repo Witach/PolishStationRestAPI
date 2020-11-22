@@ -17,6 +17,7 @@ import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationPostDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
+import pl.polishstation.polishstationbackend.domain.user.appuser.AppUserService;
 
 import javax.validation.Valid;
 
@@ -34,6 +35,9 @@ public class PetrolStationController {
     @Autowired
     PetrolStationService service;
 
+    @Autowired
+    AppUserService appUserService;
+
     @ResponseStatus(OK)
     @GetMapping("/{id}")
     public PetrolStationDTO get(@PathVariable Long id) {
@@ -50,6 +54,7 @@ public class PetrolStationController {
     @ResponseStatus(CREATED)
     @PatchMapping("/{id}")
     public void update(@Valid @RequestBody PetrolStationPostDTO dto, @PathVariable Long id) {
+        appUserService.addEditingPoint();
         service.updateEntity(dto, id);
     }
 
@@ -63,6 +68,7 @@ public class PetrolStationController {
     @ResponseStatus(CREATED)
     @PostMapping
     public PetrolStationDTO post(@Valid @RequestBody PetrolStationPostDTO dto) {
+        appUserService.addCreationToUser();
         return service.addEntity(dto);
     }
 

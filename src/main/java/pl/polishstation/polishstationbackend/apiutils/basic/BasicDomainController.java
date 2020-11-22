@@ -13,7 +13,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 public abstract class BasicDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @Autowired
-    BasicDomainService<Domain, DomainDTO, DomainPostDTO> service;
+    protected BasicDomainService<Domain, DomainDTO, DomainPostDTO> service;
 
     @ResponseStatus(OK)
     @GetMapping("/{id}")
