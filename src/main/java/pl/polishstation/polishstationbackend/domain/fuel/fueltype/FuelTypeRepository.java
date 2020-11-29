@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface FuelTypeRepository extends JpaRepository<FuelType, Long> {
     void deleteFuelTypeByNameEquals(String name);
     Optional<FuelType> findByName(String name);
+    List<FuelType> findAllByNameIn(List<String> names);
 }

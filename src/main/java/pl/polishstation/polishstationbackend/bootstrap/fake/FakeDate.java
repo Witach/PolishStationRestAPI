@@ -18,7 +18,7 @@ public class FakeDate {
             var now = LocalDateTime.now();
             return LocalDateTime.of(
                     now.getYear(),
-                    now.getMonthValue() > 1 ? now.getMonthValue() - 1 : now.getMonthValue(),
+                    random.nextInt(6),
                     Math.max(random.nextInt(30), 1),
                     random.nextInt(24),
                     random.nextInt(60),

@@ -31,7 +31,7 @@ public class OpinionFakeData {
     }
 
     public List<Opinion> fakeOpinionsWithUserBounded(AppUser appUser) {
-        var opinionsWithoutUser = IntStream.range(0, 20)
+        var opinionsWithoutUser = IntStream.range(0, 100)
                 .mapToObj(i -> fakeOpinion(appUser))
                 .collect(Collectors.toList());
         appUser.setOpinion(opinionsWithoutUser);
