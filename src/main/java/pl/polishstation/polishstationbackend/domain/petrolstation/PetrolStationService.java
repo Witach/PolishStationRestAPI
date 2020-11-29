@@ -12,12 +12,10 @@ import org.springframework.util.MultiValueMap;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
 import pl.polishstation.polishstationbackend.cache.LocalizationCacher;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceRepository;
-import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.localization.LocalizationRepository;
-import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
 import pl.polishstation.polishstationbackend.domain.opinion.OpinionRpository;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTO;
 import pl.polishstation.polishstationbackend.domain.opinion.dto.OpinionDTOMapper;
@@ -37,6 +35,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -145,14 +144,22 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .map(petrolStationDTOMapper::convertIntoDTO)
                 .collect(Collectors.toList());
 
-
-        if(isNull(multiValueMap.getFirst("lat")))
+        var userParamsOptional = extractUserData(multiValueMap);
+        if(userParamsOptional.isEmpty())
             return querryResult;
+        var userParams = userParamsOptional.orElseThrow();
 
-        var userLocation = getUserLocation(multiValueMap);
-        var maxDistance = Double.parseDouble(Objects.requireNonNull(multiValueMap.getFirst("maxDistance")));
+        var googleQuerryResult = googleApiService.getPetrolStationsOfPosition(userParams.location, (int)Math.round(userParams.maxDistance)).results;
 
-        var googleQuerryResult = googleApiService.getPetrolStationsOfPosition(userLocation, (int)Math.round(maxDistance)).results;
+        cacheUnknownStations(querryResult, googleQuerryResult);
+
+        if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
+            return filterStationListWithDistanceSort(querryResult, userParams);
+        }
+        return filterListOfPetrolsByUserDistance(querryResult, userParams);
+    }
+
+    private void cacheUnknownStations(List<PetrolStationDTO> querryResult, com.google.maps.model.PlacesSearchResult[] googleQuerryResult) {
         var newPetrols = Arrays.stream(googleQuerryResult)
                 .map(googleMapper::convertFromGoogleDto)
                 .peek(petrol -> addressFormater.decodeFormattedString(petrol.getLocalization()))
@@ -164,29 +171,40 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .collect(Collectors.toList());
 
         querryResult.addAll(newPetrols);
+    }
 
-        if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
-            return querryResult.stream()
-                    .map(this::fetchGeoPositionIfNotExists)
-                    .filter((petrolStationDTO) -> this.verifyUserDistance(petrolStationDTO, userLocation, maxDistance))
-                    .sorted(this::compareDistances)
-                    .peek(petrolStationDTO -> {
-                        var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
-                        petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
-                    })
-                    .distinct()
-                    .collect(Collectors.toList());
-        }
-
+    private List<PetrolStationDTO> filterStationsWithDistance(List<PetrolStationDTO> querryResult, UserParams userParams) {
         return querryResult.stream()
                 .map(this::fetchGeoPositionIfNotExists)
-                .filter((petrolStationDTO) -> this.verifyUserDistance(petrolStationDTO, userLocation, maxDistance))
-                .peek(petrolStationDTO -> {
-                    var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
-                    petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
-                })
+                .filter((petrolStationDTO) -> this.verifyUserDistance(petrolStationDTO, userParams.location, userParams.maxDistance))
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    private List<PetrolStationDTO> filterStationListWithDistanceSort(List<PetrolStationDTO> querryResult, UserParams userParams) {
+        return filterStationsWithDistance(querryResult, userParams).stream()
+                .sorted(this::compareDistances)
+                .peek(this::attachLastPrice)
+                .collect(Collectors.toList());
+    }
+
+
+    private List<PetrolStationDTO> filterListOfPetrolsByUserDistance(List<PetrolStationDTO> querryResult, UserParams userParams) {
+        return filterStationsWithDistance(querryResult, userParams).stream()
+                .peek(this::attachLastPrice)
+                .collect(Collectors.toList());
+    }
+
+    Optional<UserParams> extractUserData(MultiValueMap<String, String> multiValueMap) {
+        if(isNull(multiValueMap.getFirst("lat")))
+            return Optional.empty();
+
+        var userLocation = getUserLocation(multiValueMap);
+        var maxDistance = Double.parseDouble(Objects.requireNonNull(multiValueMap.getFirst("maxDistance")));
+        return Optional.of(UserParams.builder()
+                .location(userLocation)
+                .maxDistance(maxDistance)
+                .build());
     }
 
     @Override
@@ -300,9 +318,13 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     @Override
     public PetrolStationDTO getEntityById(Long id) {
         var petrolStationDTO = super.getEntityById(id);
+        attachLastPrice(petrolStationDTO);
+        return petrolStationDTO;
+    }
+
+    private void attachLastPrice(PetrolStationDTO petrolStationDTO) {
         var lastFuelPrices = getLastPricesOfFuelsForPetrolStation(petrolStationDTO);
         petrolStationDTO.setFuelPriceDTO(lastFuelPrices);
-        return petrolStationDTO;
     }
 
     @Data
