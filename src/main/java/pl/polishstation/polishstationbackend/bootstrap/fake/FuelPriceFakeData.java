@@ -13,13 +13,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames.DEFAULT_FUEL_TYPES_LIST;
 import static pl.polishstation.polishstationbackend.utils.Indexator.getEndIndexOfPart;
 import static pl.polishstation.polishstationbackend.utils.Indexator.getStartIndexOfPath;
 
 @Component
 @Profile("dev")
 public class FuelPriceFakeData {
-    static final List<String> FUEL_TYPES = Collections.unmodifiableList(List.of("PETROLE", "DIESELE", "VERVA", "BPRO", "TESLA", "H"));
+    static final List<String> FUEL_TYPES = DEFAULT_FUEL_TYPES_LIST;
     @Autowired
     private FakeDate fakeDate;
 

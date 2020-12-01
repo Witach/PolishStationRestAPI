@@ -22,7 +22,7 @@ public class StatisticsController {
 
     @ResponseStatus(OK)
     @GetMapping
-    public StatsDTO get(@RequestParam MultiValueMap<String, String> filtringParams) throws InterruptedException, ApiException, IOException {
-        return statisticsService.getStatsAboutRegion(filtringParams);
+    public StatsDTO get(){
+        return statisticsService.makeStatsOfDate();
     }
 }
