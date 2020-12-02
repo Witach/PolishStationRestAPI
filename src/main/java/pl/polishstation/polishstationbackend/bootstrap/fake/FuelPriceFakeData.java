@@ -28,7 +28,7 @@ public class FuelPriceFakeData {
     public List<FuelPrice> fakeFuelPrices(List<FuelType> fuelTypes, List<AppUser> appUsers) {
         List<FuelPrice> fuelPrices = new LinkedList<FuelPrice>();
         for (var fuelType : fuelTypes) {
-            var fakeFuelPriceOfType = IntStream.range(0, 100)
+            var fakeFuelPriceOfType = IntStream.range(0, 1000)
                     .mapToObj(i -> fakeFuelPriceOfType(fuelType))
                     .collect(Collectors.toList());
             fuelPrices.addAll(fakeFuelPriceOfType);

@@ -6,6 +6,6 @@ public class Indexator {
     }
 
     public static int getEndIndexOfPart(int v) {
-        return v * 5;
+        return v * 100;
     }
 }

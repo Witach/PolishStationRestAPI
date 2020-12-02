@@ -4,19 +4,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.bootstrap.fake.FakeDate;
 import pl.polishstation.polishstationbackend.bootstrap.fake.FuelPriceFakeData;
+import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
+import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceRepository;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationService;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
+import pl.polishstation.polishstationbackend.domain.statistics.dto.FuelPriceStats;
 import pl.polishstation.polishstationbackend.domain.statistics.dto.StatsDTO;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypesNames.DEFAULT_FUEL_TYPES_LIST;
@@ -44,6 +45,9 @@ public class StatisticsService {
 
     @Autowired
     PetrolStationDTOMapper petrolStationDTOMapper;
+
+    @Autowired
+    FuelPriceRepository fuelPriceRepository;
 
     public StatsDTO makeStatsOfDate() {
         var opinionRank = petrolStationRepository.getTopSortByOpinion(5L).stream()
@@ -77,6 +81,26 @@ public class StatisticsService {
                 .map(petrolStationDTOMapper::convertIntoDTO)
                 .collect(Collectors.toList());
         fuelPriceMap.put(fuelType.getName(), rank);
+    }
+
+    public List<?> getFuelPricesChart(String fuelTypeName, LocalDate dateFrom, LocalDate dateTom, Long petrolStationId) {
+        var fuelType = fuelTypeRepository.findByName(fuelTypeName).orElseThrow();
+        var fuelPrices = fuelPriceRepository.findAllByPetrolStationIdAndDateBetweenAndFuelTypeOrderByDate(petrolStationId, dateFrom.atStartOfDay(), dateTom.atTime(23, 59), fuelType);
+        var fuelPricesNormalized = new LinkedList<FuelPrice>();
+        FuelPrice previous = null;
+        for (FuelPrice fuelPrice: fuelPrices) {
+            if(previous != null) {
+                if(previous.getDate().toLocalDate().equals(fuelPrice.getDate().toLocalDate())) {
+                    previous = fuelPrice;
+                    continue;
+                }
+            }
+            fuelPricesNormalized.add(fuelPrice);
+            previous = fuelPrice;
+        }
+        return fuelPricesNormalized.stream()
+                .map(FuelPriceStats::fuelPriceStats)
+                .collect(Collectors.toList());
     }
 
 //    private List<PlaceDTO> makeFacilitiesRank(List<PetrolStation> petrolStations) {
