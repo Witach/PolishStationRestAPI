@@ -137,7 +137,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
        return pageOfItems;
     }
 
-    List<LastFuelPriceDTO> getLastPricesOfFuelsForPetrolStation(PetrolStationDTO petrolStation) {
+    public List<LastFuelPriceDTO> getLastPricesOfFuelsForPetrolStation(PetrolStationDTO petrolStation) {
         return fuelPriceRepository.findLastPricesOfTypeOfPetrolStation(petrolStation.getId()).stream()
                 .map(petrolStationDTOMapper::convertIntoLastFuelPriceDTO)
                 .collect(Collectors.toList());

@@ -12,7 +12,9 @@ import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationR
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationService;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
+import pl.polishstation.polishstationbackend.domain.statistics.dto.DetailsStats;
 import pl.polishstation.polishstationbackend.domain.statistics.dto.FuelPriceStats;
+import pl.polishstation.polishstationbackend.domain.statistics.dto.FuelPriceStatsDTO;
 import pl.polishstation.polishstationbackend.domain.statistics.dto.StatsDTO;
 
 import java.time.LocalDate;
@@ -52,6 +54,7 @@ public class StatisticsService {
     public StatsDTO makeStatsOfDate() {
         var opinionRank = petrolStationRepository.getTopSortByOpinion(5L).stream()
                 .map(petrolStationDTOMapper::convertIntoDTO)
+                .peek(petrolStation -> petrolStation.setFuelPriceDTO(this.petrolStationService.getLastPricesOfFuelsForPetrolStation(petrolStation)))
                 .collect(Collectors.toList());
 
         var fuelPriceTypeRank = prepareFuelPriceRank();
@@ -76,16 +79,62 @@ public class StatisticsService {
     }
 
     void getRankOfPricesFuelType(Map<String, List<PetrolStationDTO>> fuelPriceMap, FuelType fuelType) {
-        var rank = petrolStationRepository.getRankOfPetrolStationPrices(fuelType.getId())
+        var rank = fuelPriceRepository.getRankOfPetrolStationPrices(fuelType.getId())
                 .stream()
+                .map(FuelPrice::getPetrolStation)
                 .map(petrolStationDTOMapper::convertIntoDTO)
+                .peek(petrolStation -> petrolStation.setFuelPriceDTO(this.petrolStationService.getLastPricesOfFuelsForPetrolStation(petrolStation)))
                 .collect(Collectors.toList());
         fuelPriceMap.put(fuelType.getName(), rank);
     }
 
-    public List<?> getFuelPricesChart(String fuelTypeName, LocalDate dateFrom, LocalDate dateTom, Long petrolStationId) {
-        var fuelType = fuelTypeRepository.findByName(fuelTypeName).orElseThrow();
-        var fuelPrices = fuelPriceRepository.findAllByPetrolStationIdAndDateBetweenAndFuelTypeOrderByDate(petrolStationId, dateFrom.atStartOfDay(), dateTom.atTime(23, 59), fuelType);
+    public FuelPriceStatsDTO getFuelPricesChart(LocalDate dateFrom, LocalDate dateTom, Long petrolStationId) {
+        var petrolStation = petrolStationRepository.findById(petrolStationId).orElseThrow();
+        var fuelTypes = petrolStation.getFuelTypes();
+        Map<String, List<FuelPrice>> fuelPriceMap = new HashMap<>();
+        for (FuelType type: fuelTypes) {
+            var fuelPrices = fuelPriceRepository.findAllByPetrolStationIdAndDateBetweenAndFuelTypeOrderByDate(petrolStationId, dateFrom.atStartOfDay(), dateTom.atTime(23, 59), type);
+            fuelPriceMap.put(type.getName(), fuelPrices);
+        }
+
+        Map<String, List<FuelPriceStats>> fuelPriceMapStats = new HashMap<>();
+        for (String key : fuelPriceMap.keySet()) {
+            var value = fuelPriceMap.get(key);
+            var stas = getFuelPricesNormalized(value).stream()
+                    .map(FuelPriceStats::fuelPriceStats)
+                    .collect(Collectors.toList());
+            fuelPriceMapStats.put(key, stas);
+        }
+
+        Map<String, DetailsStats> detailsStatsMap = new HashMap<>();
+        for (String key: fuelPriceMapStats.keySet()) {
+            var fuelPriceStatsList = fuelPriceMapStats.get(key);
+
+            var maxValue = fuelPriceStatsList.stream()
+                    .max(Comparator.comparing(FuelPriceStats::getPrice))
+                    .orElseThrow();
+
+            var minValue = fuelPriceStatsList.stream()
+                    .min(Comparator.comparing(FuelPriceStats::getPrice))
+                    .orElseThrow();
+
+            var detailsStats = DetailsStats.builder()
+                    .dateMax(maxValue.getDate())
+                    .dateMin(minValue.getDate())
+                    .priceMax(maxValue.getPrice())
+                    .priceMin(minValue.getPrice())
+                    .build();
+
+            detailsStatsMap.put(key, detailsStats);
+        }
+
+        return FuelPriceStatsDTO.builder()
+                .detailsStatsMap(detailsStatsMap)
+                .fuelPriceStats(fuelPriceMapStats)
+                .build();
+    }
+
+    private LinkedList<FuelPrice> getFuelPricesNormalized(List<FuelPrice> fuelPrices) {
         var fuelPricesNormalized = new LinkedList<FuelPrice>();
         FuelPrice previous = null;
         for (FuelPrice fuelPrice: fuelPrices) {
@@ -98,9 +147,7 @@ public class StatisticsService {
             fuelPricesNormalized.add(fuelPrice);
             previous = fuelPrice;
         }
-        return fuelPricesNormalized.stream()
-                .map(FuelPriceStats::fuelPriceStats)
-                .collect(Collectors.toList());
+        return fuelPricesNormalized;
     }
 
 //    private List<PlaceDTO> makeFacilitiesRank(List<PetrolStation> petrolStations) {
