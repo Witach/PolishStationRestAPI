@@ -65,14 +65,14 @@ public class AddressFormater {
             localization.setStreet(streetName.toString());
             if(addresParts.length > 1) {
                 var townParts = addresParts[1].split(" ");
-                localization.setPostalCode(townParts[0]);
-                var townName = new StringBuilder("");
-                for (int i = 1; i < townParts.length; i++) {
-                    townName.append(townParts[i]);
-                    if( i != townParts.length -1)
-                        townName.append(" ");
-                }
-                localization.setName(townName.toString());
+                localization.setPostalCode(townParts[1]);
+//                var townName = new StringBuilder("");
+//                for (int i = 1; i < townParts.length; i++) {
+//                    townName.append(townParts[i]);
+//                    if( i != townParts.length -1)
+//                        townName.append(" ");
+//                }
+                localization.setName(townParts[2]);
             }
         }
         return localization;
