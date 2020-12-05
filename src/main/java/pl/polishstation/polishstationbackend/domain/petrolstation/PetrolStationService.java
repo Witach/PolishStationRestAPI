@@ -33,10 +33,7 @@ import pl.polishstation.polishstationbackend.utils.geo.GeoCalculator;
 import pl.polishstation.polishstationbackend.utils.geo.Location;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -144,9 +141,21 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
     }
 
     List<PetrolStationDTO> searchForPetrolStations(Sort sort, MultiValueMap<String, String> multiValueMap) throws InterruptedException, ApiException, IOException {
-        var querryResult = petrolStationRepository.findAll(petrolStationSpecFactory.specificationFrom(multiValueMap), sort).stream()
-                .map(petrolStationDTOMapper::convertIntoDTO)
-                .collect(Collectors.toList());
+        Sort.Order order = null;
+        if(sort.stream().iterator().hasNext()) {
+            order = sort.stream().iterator().next();
+        }
+        List<PetrolStationDTO> querryResult = null;
+        if(order != null && order.getProperty().equals("price")) {
+            querryResult = petrolStationRepository.findAll(petrolStationSpecFactory.specificationFrom(multiValueMap)).stream()
+                    .map(petrolStationDTOMapper::convertIntoDTO)
+                    .collect(Collectors.toList());
+        } else {
+            querryResult = petrolStationRepository.findAll(petrolStationSpecFactory.specificationFrom(multiValueMap), sort).stream()
+                    .map(petrolStationDTOMapper::convertIntoDTO)
+                    .collect(Collectors.toList());
+        }
+
 
         var userParamsOptional = extractUserData(multiValueMap);
         if(userParamsOptional.isEmpty())
@@ -155,12 +164,35 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
 
         var googleQuerryResult = googleApiService.getPetrolStationsOfPosition(userParams.location, (int)Math.round(userParams.maxDistance)).results;
 
-        cacheUnknownStations(querryResult, googleQuerryResult);
+        var querryToCache = petrolStationRepository.findAll().stream()
+                .map(mapper::convertIntoDTO)
+                .collect(Collectors.toList());
+        var queryToCacheDTO = filterListOfPetrolsByUserDistance(querryToCache, userParams);
+        cacheUnknownStations(queryToCacheDTO, googleQuerryResult);
 
         if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
             return filterStationListWithDistanceSort(querryResult, userParams);
         }
-        return filterListOfPetrolsByUserDistance(querryResult, userParams);
+        var filtredByDistance = filterListOfPetrolsByUserDistance(querryResult, userParams);
+        if (order != null && order.getProperty().equals("price")) {
+            filtredByDistance = filtredByDistance.stream()
+                    .sorted(Comparator.comparing(petrolStationDTO -> getProperKey(petrolStationDTO ,multiValueMap)))
+                    .collect(Collectors.toList());
+        }
+        return filtredByDistance;
+    }
+
+    private Double getProperKey(PetrolStationDTO petrolStationDTO, MultiValueMap<String, String> multiValueMap) {
+        var fuelType = multiValueMap.get("fuelType").get(0);
+        var price = petrolStationDTO.getFuelPriceDTO().stream()
+                .filter(lastFuelPriceDTO -> lastFuelPriceDTO.getFuelType().equals(fuelType))
+                .findFirst()
+                .orElseGet(() -> {
+                    var last = new LastFuelPriceDTO();
+                    last.setPrice(1000000.);
+                    return last;
+                });
+        return price.getPrice();
     }
 
     public void cacheUnknownStations(List<PetrolStationDTO> querryResult, com.google.maps.model.PlacesSearchResult[] googleQuerryResult) {
