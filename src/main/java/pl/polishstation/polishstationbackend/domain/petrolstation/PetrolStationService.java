@@ -168,7 +168,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .map(mapper::convertIntoDTO)
                 .collect(Collectors.toList());
         var queryToCacheDTO = filterListOfPetrolsByUserDistance(querryToCache, userParams);
-        cacheUnknownStations(queryToCacheDTO, googleQuerryResult);
+        cacheUnknownStations(queryToCacheDTO, googleQuerryResult, querryResult);
 
         if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
             return filterStationListWithDistanceSort(querryResult, userParams);
@@ -195,7 +195,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         return price.getPrice();
     }
 
-    public void cacheUnknownStations(List<PetrolStationDTO> querryResult, com.google.maps.model.PlacesSearchResult[] googleQuerryResult) {
+    public void cacheUnknownStations(List<PetrolStationDTO> querryResult, com.google.maps.model.PlacesSearchResult[] googleQuerryResult, List<PetrolStationDTO> searchedResult) {
         var newPetrols = Arrays.stream(googleQuerryResult)
                 .map(googleMapper::convertFromGoogleDto)
                 .peek(petrol -> addressFormater.decodeFormattedString(petrol.getLocalization()))
@@ -206,7 +206,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .map(this::addEntity)
                 .collect(Collectors.toList());
 
-        querryResult.addAll(newPetrols);
+        searchedResult.addAll(newPetrols);
     }
 
     public List<PetrolStationDTO> filterStationsWithDistance(List<PetrolStationDTO> querryResult, UserParams userParams) {
