@@ -4,7 +4,10 @@ import org.springframework.data.jpa.domain.Specification;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.Function;
 
 public enum SpecFields {
@@ -17,6 +20,25 @@ public enum SpecFields {
                             return join.join("fuelTypes", JoinType.LEFT)
                                     .get("name")
                                     .in(resolver.getFieldValue());
+                        } else {
+                            return criteriaBuilder.and();
+                        }
+                    }
+    ),
+    FACILITIES(
+            "facilities",
+            (resolver) ->
+                    (root, criteriaQuery, criteriaBuilder) -> {
+                        var fieldValues = resolver.getFieldValue();
+                        List<Predicate> predicates = new LinkedList<>();
+                        if(fieldValues.size() > 0) {
+                            for (String field : fieldValues.get(0).split(",")) {
+                                var spec = criteriaBuilder.isTrue(root.get("petrolStationStats").get(field));
+                                var spec2 = criteriaBuilder.isNotNull(root.get("petrolStationStats").get(field));
+                                predicates.add(spec);
+                                predicates.add(spec2);
+                            }
+                            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
                         } else {
                             return criteriaBuilder.and();
                         }
