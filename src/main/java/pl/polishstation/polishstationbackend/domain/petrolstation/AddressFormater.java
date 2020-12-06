@@ -72,7 +72,9 @@ public class AddressFormater {
 //                    if( i != townParts.length -1)
 //                        townName.append(" ");
 //                }
-                localization.setName(townParts[2]);
+                if (townParts.length > 1) {
+                    localization.setName(townParts[2]);
+                }
             }
         }
         return localization;
