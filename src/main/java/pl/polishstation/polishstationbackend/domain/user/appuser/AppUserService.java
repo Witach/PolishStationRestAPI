@@ -1,6 +1,7 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser;
 
 import com.github.javafaker.App;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,13 +14,17 @@ import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserStatsDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
+import pl.polishstation.polishstationbackend.domain.user.verification.RegisterService;
 import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 import pl.polishstation.polishstationbackend.exception.UniqueDataArleadyExists;
+import pl.polishstation.polishstationbackend.exception.WrongTokenData;
 
+import javax.validation.Valid;
 import java.security.Security;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+import static pl.polishstation.polishstationbackend.auth.JwtUtils.validateToken;
 import static pl.polishstation.polishstationbackend.exception.ExcpetionFactory.uniqueDataExceptionOfClassResolver;
 
 @Service
@@ -33,6 +38,9 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    RegisterService registerService;
 
     BiFunction<String, String, UniqueDataArleadyExists> exceptionResolver = uniqueDataExceptionOfClassResolver(AppUser.class);
 
@@ -113,5 +121,15 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
                 () -> appUser.setAmountOfEditedInformations(1L)
         );
         repository.save(appUser);
+    }
+
+    public void updatePassword(@Valid AppUserPostDTO dto, String email, String jwt) {
+        var appUser = appUserRepository.findAppUserByEmailEquals(email).orElseThrow();
+        if(!validateToken(jwt, new UserDetailsImpl(appUser)))
+            throw new WrongTokenData();
+        if(!jwt.equals(appUser.getVerificationToken().getToken()))
+            throw new WrongTokenData();
+        appUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        appUserRepository.save(appUser);
     }
 }

@@ -50,7 +50,7 @@ public class RegisterService {
         );
     }
 
-    private void verifyToken(String token, AppUser appUser) {
+    public void verifyToken(String token, AppUser appUser) {
         if(appUser.getIsVerified())
             throw new UserArleadyVerified();
         if(extractExpiration(token).before(new Date()))
@@ -68,6 +68,15 @@ public class RegisterService {
         var emailContent = generateRegistrationEmailContext(token.getToken(), url);
         emailSender.sendMail(appUser.getEmail(), emailContent);
         return appUserService.persistsAppUser(appUser);
+    }
+
+    public void resemblePassword(String email, String url) throws MessagingException {
+        var appUser = appUserRepository.findAppUserByEmailEquals(email).orElseThrow();
+        var token = verificationTokenInstanceFromAppUser(appUser);
+        appUser.setVerificationToken(token);
+        var emailContent = generateResembleContext(token.getToken(), url);
+        emailSender.sendMail(appUser.getEmail(), emailContent);
+        appUserService.persistsAppUser(appUser);
     }
 
     private VerificationToken verificationTokenInstanceFromAppUser(AppUser appUser) {
@@ -94,6 +103,15 @@ public class RegisterService {
         context.setVariable("description", url + "/verify/" + token);
         context.setVariable("link", url + "/logo.png");
         return templateEngine.process("template", context);
+    }
+
+    private String generateResembleContext(String token, String url) {
+        var context = new Context();
+        context.setVariable("header", "PolishStation");
+        context.setVariable("title", "Przypomnij hasło");
+        context.setVariable("description", "http://localhost:4200/auth/resemble-reset/" + token);
+        context.setVariable("link", url + "logo.png");
+        return templateEngine.process("resemble", context);
     }
 
     private LocalDateTime calculateExpirationDate(LocalDateTime from) {

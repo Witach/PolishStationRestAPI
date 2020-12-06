@@ -20,8 +20,8 @@ public class EmailSender {
 
         var mimeMessage = javaEmailSender.createMimeMessage();
         var mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-        mimeMessageHelper.setTo("witach98@gmail.com");
-        mimeMessageHelper.setFrom("witach98@gmail.com");
+        mimeMessageHelper.setTo(to);
+        mimeMessageHelper.setFrom("polishstationv2@wp.pl");
         mimeMessageHelper.setSubject("Verify registration at PolishStation");
         mimeMessageHelper.setText(text, true);
         var path = resourceLoader.getClassLoader().getResource("./static/logo.png");
