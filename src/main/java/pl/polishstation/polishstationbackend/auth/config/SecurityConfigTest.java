@@ -18,7 +18,7 @@ public class SecurityConfigTest extends AbstractSecurityConfig {
     @Override
     HttpSecurity makeHttpChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeRequests()
-                .antMatchers(IGNORED_URLS.toArray(String[]::new)).permitAll()
+                .antMatchers(IGNORED_URLS.toArray(new String[IGNORED_URLS.size()])).permitAll()
                 .antMatchers( "/auth").permitAll()
                 .antMatchers("/app-user/register").permitAll()
                 .antMatchers("/verify/{token}").permitAll()
