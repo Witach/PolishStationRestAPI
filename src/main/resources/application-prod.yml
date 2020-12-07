@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgres://rfsatlyvssibmb:7c0efaf52a82224c9064998f9f1f6e15ba0676632df1a000c9454e252dcfcd39@ec2-54-247-71-245.eu-west-1.compute.amazonaws.com:5432/d33f37sde5f5l4
+    url: jdbc:postgresql://rfsatlyvssibmb:7c0efaf52a82224c9064998f9f1f6e15ba0676632df1a000c9454e252dcfcd39@ec2-54-247-71-245.eu-west-1.compute.amazonaws.com:5432/d33f37sde5f5l4
     driver-class-name: org.postgresql.Driver
     username: rfsatlyvssibmb
     password: 7c0efaf52a82224c9064998f9f1f6e15ba0676632df1a000c9454e252dcfcd39
