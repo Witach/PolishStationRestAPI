@@ -93,7 +93,7 @@ public class StatisticsService {
         var fuelTypes = petrolStation.getFuelTypes();
         Map<String, List<FuelPrice>> fuelPriceMap = new HashMap<>();
         for (FuelType type: fuelTypes) {
-            var fuelPrices = fuelPriceRepository.findAllByPetrolStationIdAndDateBetweenAndFuelTypeOrderByDate(petrolStationId, dateFrom.atStartOfDay(), dateTom.atTime(23, 59), type);
+            var fuelPrices = fuelPriceRepository.findAllByPetrolStationIdAndDateBetweenAndFuelTypeAndVerifiedOrderByDate(petrolStationId, dateFrom.atStartOfDay(), dateTom.atTime(23, 59), type, true);
             fuelPriceMap.put(type.getName(), fuelPrices);
         }
 

@@ -49,6 +49,7 @@ public class FuelPriceFakeData {
         var fuelPrice = FuelPrice.builder()
                 .date(fakeDate.fakeDateOnePastMonth())
                 .fuelType(fuelType)
+                .verified(true)
                 .price(fakeFuelPriceValue())
                 .build();
         fuelType.getFuelPrices().add(fuelPrice);

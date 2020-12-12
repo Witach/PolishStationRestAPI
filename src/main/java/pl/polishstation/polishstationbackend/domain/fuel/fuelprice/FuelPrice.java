@@ -37,6 +37,8 @@ public class FuelPrice extends BasicEntity implements CloneableEntity<FuelPrice>
     @JoinColumn(name = "user_id")
     private AppUser user;
 
+    private Boolean verified = false;
+
     @NotNull
     @ManyToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "fuel_type_id")

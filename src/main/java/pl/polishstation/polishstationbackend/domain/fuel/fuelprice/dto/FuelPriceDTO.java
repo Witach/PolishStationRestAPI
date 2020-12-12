@@ -18,4 +18,5 @@ public class FuelPriceDTO {
     AppUserDTO appUserDTO;
     String fuelType;
     PetrolStationForPetrolPrice petrolStation;
+    private Boolean verified = false;
 }
