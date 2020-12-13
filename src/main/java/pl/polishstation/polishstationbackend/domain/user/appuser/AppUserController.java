@@ -59,7 +59,7 @@ public class AppUserController extends BasicDomainController<AppUser, AppUserDTO
     }
 
     @ResponseStatus(OK)
-    @GetMapping("/{email}/loved-stations")
+    @PostMapping("/{email}/loved-stations")
     public void postLovedStations(@PathVariable String email, @RequestBody LovedPetrolStationDTO lovedPetrolStationDTO) {
         appUserService.attachLovedPetrolStation(email, lovedPetrolStationDTO);
     }
@@ -71,7 +71,7 @@ public class AppUserController extends BasicDomainController<AppUser, AppUserDTO
     }
 
     @ResponseStatus(OK)
-    @PostMapping("/{email}/loved-stations")
+    @GetMapping("/{email}/loved-stations")
     public List<PetrolStationDTO> getLovedStations(@PathVariable String email) {
         return appUserService.getLovedPetrolStaitonsOfUser(email);
     }

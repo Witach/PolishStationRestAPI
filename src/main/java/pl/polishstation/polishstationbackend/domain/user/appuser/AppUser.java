@@ -42,7 +42,6 @@ public class AppUser extends BasicEntity {
     private String password;
 
     @NotNull
-    @Column(name = "is_verified", nullable = false)
     private Boolean isVerified = false;
 
     private Long amountOfPoints = 0L;
