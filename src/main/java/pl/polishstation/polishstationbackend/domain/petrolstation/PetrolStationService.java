@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import pl.polishstation.polishstationbackend.apiutils.filtring.FilterDomainService;
+import pl.polishstation.polishstationbackend.aspect.IsOneLoved;
 import pl.polishstation.polishstationbackend.cache.LocalizationCacher;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPriceRepository;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelTypeRepository;
@@ -365,6 +366,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
                 .collect(Collectors.toList());
     }
 
+    @IsOneLoved
     @Override
     public PetrolStationDTO getEntityById(Long id) {
         var petrolStationDTO = super.getEntityById(id);

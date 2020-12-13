@@ -10,19 +10,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
 import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsImpl;
+import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
+import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
+import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserStatsDTO;
+import pl.polishstation.polishstationbackend.domain.user.appuser.dto.LovedPetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
 import pl.polishstation.polishstationbackend.domain.user.verification.RegisterService;
+import pl.polishstation.polishstationbackend.entity.BasicEntity;
 import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 import pl.polishstation.polishstationbackend.exception.UniqueDataArleadyExists;
 import pl.polishstation.polishstationbackend.exception.WrongTokenData;
 
 import javax.validation.Valid;
 import java.security.Security;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static pl.polishstation.polishstationbackend.auth.JwtUtils.validateToken;
 import static pl.polishstation.polishstationbackend.exception.ExcpetionFactory.uniqueDataExceptionOfClassResolver;
@@ -34,6 +41,9 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
     AppUserRepository appUserRepository;
 
     @Autowired
+    PetrolStationRepository petrolStationRepository;
+
+    @Autowired
     AppUserRoleRepository appUserRoleRepository;
 
     @Autowired
@@ -41,6 +51,9 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
 
     @Autowired
     RegisterService registerService;
+
+    @Autowired
+    PetrolStationDTOMapper petrolStationDTOMapper;
 
     BiFunction<String, String, UniqueDataArleadyExists> exceptionResolver = uniqueDataExceptionOfClassResolver(AppUser.class);
 
@@ -131,5 +144,30 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
             throw new WrongTokenData();
         appUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         appUserRepository.save(appUser);
+    }
+
+    @Transactional
+    public void attachLovedPetrolStation(String email, LovedPetrolStationDTO lovedPetrolStationDTO) {
+        var petrolStaionToBeLoved = petrolStationRepository.findById(lovedPetrolStationDTO.getPetrolStationId()).orElseThrow();
+        appUserRepository.findAppUserByEmailEquals(email).orElseThrow()
+                .getLovedStations()
+                .add(petrolStaionToBeLoved);
+    }
+
+    @Transactional
+    public void discardLovedPetrolStation(String email, LovedPetrolStationDTO lovedPetrolStationDTO) {
+        var petrolStaionToBeLoved = petrolStationRepository.findById(lovedPetrolStationDTO.getPetrolStationId()).orElseThrow();
+        appUserRepository.findAppUserByEmailEquals(email).orElseThrow()
+                .getLovedStations()
+                .removeIf(perol -> perol.getId().equals(petrolStaionToBeLoved.getId()));
+    }
+
+    public List<PetrolStationDTO> getLovedPetrolStaitonsOfUser(String email) {
+        return appUserRepository.findAppUserByEmailEquals(email)
+                .orElseThrow()
+                .getLovedStations()
+                .stream()
+                .map(petrolStationDTOMapper::convertIntoDTO)
+                .collect(Collectors.toList());
     }
 }

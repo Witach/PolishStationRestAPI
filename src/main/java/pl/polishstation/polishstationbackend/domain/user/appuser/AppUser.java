@@ -5,6 +5,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
+import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 import pl.polishstation.polishstationbackend.domain.user.appuser.validation.IsDefault;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRole;
 import pl.polishstation.polishstationbackend.domain.user.verification.VerificationToken;
@@ -49,6 +50,9 @@ public class AppUser extends BasicEntity {
     private Long amountOfCreatedStations = 0L;
     private Long amountOfEditedInformations = 0L;
 
+    @ManyToMany(mappedBy = "lovedUsers")
+    List<PetrolStation> lovedStations = new LinkedList<>();
+
     //revert
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
@@ -75,5 +79,6 @@ public class AppUser extends BasicEntity {
 
     public static class AppUserBuilder {
         private List<AppUserRole> appUserRoles = new LinkedList<>();
+        private List<PetrolStation> lovedStations = new LinkedList<>();
     }
 }

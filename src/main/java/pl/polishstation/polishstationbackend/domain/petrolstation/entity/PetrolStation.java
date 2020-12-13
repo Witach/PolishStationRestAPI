@@ -8,6 +8,7 @@ import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.FuelPrice;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.localization.Localization;
 import pl.polishstation.polishstationbackend.domain.opinion.Opinion;
+import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
 import pl.polishstation.polishstationbackend.entity.BasicEntity;
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
@@ -62,6 +63,9 @@ public class PetrolStation extends BasicEntity implements CloneableEntity<Petrol
 
     @OneToMany(mappedBy = "petrolStation", cascade = {CascadeType.REMOVE})
     private List<Opinion> opinions = new LinkedList<>();
+
+    @ManyToMany()
+    private List<AppUser> lovedUsers = new LinkedList<>();
 
     @Override
     public PetrolStation cloneEntity() {

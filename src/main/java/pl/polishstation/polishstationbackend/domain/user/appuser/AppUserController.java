@@ -4,14 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainController;
 import pl.polishstation.polishstationbackend.aspect.Loggable;
+import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
+import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserStatsDTO;
+import pl.polishstation.polishstationbackend.domain.user.appuser.dto.LovedPetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.user.verification.RegisterService;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 import static pl.polishstation.polishstationbackend.utils.ExtractAppUrl.extractAppUrl;
@@ -51,5 +56,23 @@ public class AppUserController extends BasicDomainController<AppUser, AppUserDTO
     @PatchMapping("/{email}/update-password/{jwt}")
     public void update(@Valid @RequestBody AppUserPostDTO dto, @PathVariable String email, @PathVariable String jwt) {
         appUserService.updatePassword(dto, email, jwt);
+    }
+
+    @ResponseStatus(OK)
+    @GetMapping("/{email}/loved-stations")
+    public void postLovedStations(@PathVariable String email, @RequestBody LovedPetrolStationDTO lovedPetrolStationDTO) {
+        appUserService.attachLovedPetrolStation(email, lovedPetrolStationDTO);
+    }
+
+    @ResponseStatus(OK)
+    @DeleteMapping("/{email}/loved-stations/{id}")
+    public void deleteLovedStations(@PathVariable String email, @PathVariable long id) {
+        appUserService.discardLovedPetrolStation(email, new LovedPetrolStationDTO(id));
+    }
+
+    @ResponseStatus(OK)
+    @PostMapping("/{email}/loved-stations")
+    public List<PetrolStationDTO> getLovedStations(@PathVariable String email) {
+        return appUserService.getLovedPetrolStaitonsOfUser(email);
     }
 }
