@@ -149,17 +149,19 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
     @Transactional
     public void attachLovedPetrolStation(String email, LovedPetrolStationDTO lovedPetrolStationDTO) {
         var petrolStaionToBeLoved = petrolStationRepository.findById(lovedPetrolStationDTO.getPetrolStationId()).orElseThrow();
-        appUserRepository.findAppUserByEmailEquals(email).orElseThrow()
-                .getLovedStations()
-                .add(petrolStaionToBeLoved);
+        var user = appUserRepository.findAppUserByEmailEquals(email).orElseThrow();
+        petrolStaionToBeLoved.getLovedUsers().add(user);
+        petrolStationRepository.save(petrolStaionToBeLoved);
     }
 
     @Transactional
     public void discardLovedPetrolStation(String email, LovedPetrolStationDTO lovedPetrolStationDTO) {
         var petrolStaionToBeLoved = petrolStationRepository.findById(lovedPetrolStationDTO.getPetrolStationId()).orElseThrow();
-        appUserRepository.findAppUserByEmailEquals(email).orElseThrow()
-                .getLovedStations()
-                .removeIf(perol -> perol.getId().equals(petrolStaionToBeLoved.getId()));
+        var user = appUserRepository.findAppUserByEmailEquals(email).orElseThrow();
+        petrolStaionToBeLoved.getLovedUsers().removeIf(
+                appUser -> appUser.getId().equals(user.getId())
+        );
+        petrolStationRepository.save(petrolStaionToBeLoved);
     }
 
     public List<PetrolStationDTO> getLovedPetrolStaitonsOfUser(String email) {
@@ -168,6 +170,7 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
                 .getLovedStations()
                 .stream()
                 .map(petrolStationDTOMapper::convertIntoDTO)
+                .peek(petrolStationDTO -> petrolStationDTO.setIsLovedByUser(true))
                 .collect(Collectors.toList());
     }
 }
