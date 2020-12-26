@@ -1,9 +1,6 @@
 package pl.polishstation.polishstationbackend.domain.user.appuser;
 
-import com.github.javafaker.App;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,13 +16,11 @@ import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserStat
 import pl.polishstation.polishstationbackend.domain.user.appuser.dto.LovedPetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
 import pl.polishstation.polishstationbackend.domain.user.verification.RegisterService;
-import pl.polishstation.polishstationbackend.entity.BasicEntity;
 import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
 import pl.polishstation.polishstationbackend.exception.UniqueDataArleadyExists;
 import pl.polishstation.polishstationbackend.exception.WrongTokenData;
 
 import javax.validation.Valid;
-import java.security.Security;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;

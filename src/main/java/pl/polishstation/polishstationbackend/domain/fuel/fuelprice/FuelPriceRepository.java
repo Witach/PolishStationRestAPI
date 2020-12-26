@@ -20,7 +20,7 @@ public interface FuelPriceRepository extends JpaRepository<FuelPrice, Long> {
 
     List<FuelPrice> findAllByPetrolStationIdAndDateBetweenAndFuelTypeAndVerifiedOrderByDate(Long petrolStation_id, @PastOrPresent LocalDateTime date, @PastOrPresent LocalDateTime date2, @NotNull FuelType fuelType, Boolean verified);
 
-    @Query(value = "SELECT FUEL_PRICE.ID, DATE, PRICE, FUEL_TYPE_ID, PETROL_STATION_ID, USER_ID FROM FUEL_PRICE JOIN PETROL_STATION ON PETROL_STATION.ID = FUEL_PRICE.PETROL_STATION_ID WHERE (DATE, PETROL_STATION_ID) IN ( SELECT max(DATE), PETROL_STATION_ID  FROM FUEL_PRICE JOIN PETROL_STATION ON PETROL_STATION.ID = FUEL_PRICE.PETROL_STATION_ID WHERE FUEL_PRICE.FUEL_TYPE_ID = :fuelTypeId GROUP BY PETROL_STATION_ID ) AND VERIFIED  = TRUE ORDER BY PRICE ASC" , nativeQuery = true)
+    @Query(value = "SELECT FUEL_PRICE.ID, DATE, PRICE, FUEL_TYPE_ID, PETROL_STATION_ID, USER_ID, VERIFIED FROM FUEL_PRICE JOIN PETROL_STATION ON PETROL_STATION.ID = FUEL_PRICE.PETROL_STATION_ID WHERE (DATE, PETROL_STATION_ID) IN ( SELECT max(DATE), PETROL_STATION_ID  FROM FUEL_PRICE JOIN PETROL_STATION ON PETROL_STATION.ID = FUEL_PRICE.PETROL_STATION_ID WHERE FUEL_PRICE.FUEL_TYPE_ID = :fuelTypeId GROUP BY PETROL_STATION_ID ) AND VERIFIED  = TRUE ORDER BY PRICE ASC" , nativeQuery = true)
     List<FuelPrice> getRankOfPetrolStationPrices(Long fuelTypeId);
 
     List<FuelPrice> findAllByPetrolStationAndFuelTypeOrderByDateAsc(@NotNull PetrolStation petrolStation, @NotNull FuelType fuelType);

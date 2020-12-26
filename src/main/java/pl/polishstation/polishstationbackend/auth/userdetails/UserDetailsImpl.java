@@ -12,13 +12,13 @@ public class UserDetailsImpl implements UserDetails {
     String username;
     String password;
     Long userId;
-    Boolean isVerified;
+    Boolean verified;
     List<AuthorityImpl> authorities;
 
     public UserDetailsImpl(AppUser appUser) {
         username = appUser.getEmail();
         password = appUser.getPassword();
-        isVerified = appUser.getIsVerified();
+        verified = appUser.getIsVerified();
         authorities = appUser.getAppUserRoles().stream()
                 .map(AuthorityImpl::new)
                 .collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isVerified;
+        return verified;
     }
 
     public Long getUserId() {

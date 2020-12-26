@@ -3,14 +3,13 @@ package pl.polishstation.polishstationbackend.domain.fuel.fuelprice;
 import lombok.*;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.validation.Precision;
 import pl.polishstation.polishstationbackend.domain.fuel.fuelprice.validation.Verified;
-import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
-import pl.polishstation.polishstationbackend.entity.BasicEntity;
 import pl.polishstation.polishstationbackend.domain.fuel.fueltype.FuelType;
 import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
+import pl.polishstation.polishstationbackend.domain.user.appuser.AppUser;
+import pl.polishstation.polishstationbackend.entity.BasicEntity;
 import pl.polishstation.polishstationbackend.utils.CloneableEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
