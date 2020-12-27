@@ -147,7 +147,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
             order = sort.stream().iterator().next();
         }
         List<PetrolStationDTO> querryResult = null;
-        if(order != null && order.getProperty().equals("price")) {
+        if(order != null && (order.getProperty().equals("price") ||  order.getProperty().equals("distance"))) {
             querryResult = petrolStationRepository.findAll(petrolStationSpecFactory.specificationFrom(multiValueMap)).stream()
                     .map(petrolStationDTOMapper::convertIntoDTO)
                     .collect(Collectors.toList());
@@ -171,7 +171,7 @@ public class PetrolStationService extends FilterDomainService<PetrolStation, Pet
         var queryToCacheDTO = filterListOfPetrolsByUserDistance(querryToCache, userParams);
         cacheUnknownStations(queryToCacheDTO, googleQuerryResult, querryResult);
 
-        if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).equals("distance")) {
+        if(!sort.isEmpty() && sort.get().collect(Collectors.toList()).get(0).getProperty().equals("distance")) {
             return filterStationListWithDistanceSort(querryResult, userParams);
         }
         var filtredByDistance = filterListOfPetrolsByUserDistance(querryResult, userParams);

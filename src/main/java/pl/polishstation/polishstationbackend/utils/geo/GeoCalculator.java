@@ -5,12 +5,7 @@ import static java.lang.Math.*;
 public class GeoCalculator {
 
     public static double distance(Location pointA, Location pointB) {
-        double dlon = pointB.getRadiansLong() - pointA.getRadiansLong();
-        double dlat = pointB.getRadiansLat() - pointA.getRadiansLat();
-        double a = powOfSinDistance(dlat) + cos(pointA.getLat()) * cos(pointB.getLat()) * powOfSinDistance(dlon);
-        double c = 2 * asin(sqrt(a));
-        double r = 6371;
-        return(c * r);
+        return Math.sqrt(Math.pow(pointA.get_long() - pointB.get_long(), 2) + Math.pow(pointA.getLat() - pointB.getLat(), 2));
     }
 
     private static double powOfSinDistance(double value) {

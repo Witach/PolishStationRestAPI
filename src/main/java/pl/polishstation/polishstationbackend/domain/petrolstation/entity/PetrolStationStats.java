@@ -14,9 +14,9 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PetrolStationStats implements CloneableEntity<PetrolStationStats> {
-    Double avgOpinion;
-    Long amountOfOpinion;
-    Double avgPrice;
+    Double avgOpinion = 0D;
+    Long amountOfOpinion = 0L;
+    Double avgPrice = 0D;
     Boolean isHotDogs = false;
     Boolean isWCFree = false;
     Boolean isWC = false;
@@ -31,5 +31,11 @@ public class PetrolStationStats implements CloneableEntity<PetrolStationStats> {
                 .amountOfOpinion(amountOfOpinion)
                 .avgOpinion(avgOpinion)
                 .build();
+    }
+
+    public static class PetrolStationStatsBuilder {
+        private Double avgOpinion = 0D;
+        private Long amountOfOpinion = 0L;
+        private Double avgPrice = 0D;
     }
 }
