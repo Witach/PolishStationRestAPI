@@ -17,7 +17,7 @@ public class FakeDate {
         public LocalDateTime fakeDateOnePastMonth() {
             var now = LocalDateTime.now();
             return LocalDateTime.of(
-                    now.getYear(),
+                    now.getYear() - 1,
                     random.nextInt(6) + 1,
                     Math.max(random.nextInt(30), 1),
                     random.nextInt(24),

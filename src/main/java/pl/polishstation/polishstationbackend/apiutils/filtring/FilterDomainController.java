@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.apiutils.filtring;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,7 @@ public abstract class FilterDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @ResponseStatus(CREATED)
     @PostMapping
-    public DomainDTO post(@Valid @RequestBody DomainPostDTO dto) {
+    public DomainDTO post(@Valid @RequestBody DomainPostDTO dto) throws FirebaseMessagingException {
         return service.addEntity(dto);
     }
 }

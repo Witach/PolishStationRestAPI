@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.apiutils.basic;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
@@ -18,7 +19,7 @@ public abstract class BasicDomainService<Domain, DomainDTO, DomainPostDTO> {
     @Autowired
     protected JpaRepository<Domain, Long> repository;
 
-    public DomainDTO addEntity(DomainPostDTO dto) {
+    public DomainDTO addEntity(DomainPostDTO dto) throws FirebaseMessagingException {
         var newEntity = postDTOMapper.convertIntoObject(dto);
         return mapper.convertIntoDTO(
                 repository.save(newEntity)

@@ -10,10 +10,7 @@ import pl.polishstation.polishstationbackend.auth.userdetails.UserDetailsImpl;
 import pl.polishstation.polishstationbackend.domain.petrolstation.PetrolStationRepository;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTOMapper;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserStatsDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.LovedPetrolStationDTO;
+import pl.polishstation.polishstationbackend.domain.user.appuser.dto.*;
 import pl.polishstation.polishstationbackend.domain.user.appuserrole.AppUserRoleRepository;
 import pl.polishstation.polishstationbackend.domain.user.verification.RegisterService;
 import pl.polishstation.polishstationbackend.exception.EntityDoesNotExists;
@@ -167,5 +164,11 @@ public class  AppUserService extends BasicDomainService<AppUser, AppUserDTO, App
                 .map(petrolStationDTOMapper::convertIntoDTO)
                 .peek(petrolStationDTO -> petrolStationDTO.setIsLovedByUser(true))
                 .collect(Collectors.toList());
+    }
+
+    public void updateToken(@Valid TokenRequest dto, String email) {
+         var user = appUserRepository.findAppUserByEmailEquals(email).orElseThrow();
+         user.setFirebaseToken(dto.getFireToken());
+         appUserRepository.save(user);
     }
 }

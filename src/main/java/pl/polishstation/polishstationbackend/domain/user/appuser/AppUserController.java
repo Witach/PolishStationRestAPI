@@ -5,11 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainController;
 import pl.polishstation.polishstationbackend.aspect.Loggable;
 import pl.polishstation.polishstationbackend.domain.petrolstation.dto.PetrolStationDTO;
-import pl.polishstation.polishstationbackend.domain.petrolstation.entity.PetrolStation;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserPostDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.AppUserStatsDTO;
-import pl.polishstation.polishstationbackend.domain.user.appuser.dto.LovedPetrolStationDTO;
+import pl.polishstation.polishstationbackend.domain.user.appuser.dto.*;
 import pl.polishstation.polishstationbackend.domain.user.verification.RegisterService;
 
 import javax.mail.MessagingException;
@@ -75,4 +71,11 @@ public class AppUserController extends BasicDomainController<AppUser, AppUserDTO
     public List<PetrolStationDTO> getLovedStations(@PathVariable String email) {
         return appUserService.getLovedPetrolStaitonsOfUser(email);
     }
+
+    @ResponseStatus(CREATED)
+    @PostMapping("/{email}/fire-token")
+    public void update(@Valid @RequestBody TokenRequest dto, @PathVariable String email) {
+        appUserService.updateToken(dto, email);
+    }
+
 }

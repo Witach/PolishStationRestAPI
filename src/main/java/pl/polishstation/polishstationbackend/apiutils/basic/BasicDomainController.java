@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.apiutils.basic;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public abstract class BasicDomainController<Domain, DomainDTO, DomainPostDTO> {
 
     @ResponseStatus(CREATED)
     @PostMapping
-    public DomainDTO post(@Valid @RequestBody DomainPostDTO dto) {
+    public DomainDTO post(@Valid @RequestBody DomainPostDTO dto) throws FirebaseMessagingException {
         return service.addEntity(dto);
     }
 

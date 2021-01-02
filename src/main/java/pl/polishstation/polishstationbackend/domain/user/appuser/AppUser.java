@@ -57,6 +57,8 @@ public class AppUser extends BasicEntity {
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
     private VerificationToken verificationToken;
 
+    private String firebaseToken;
+
     @NotNull
     @IsDefault
     @LazyCollection(LazyCollectionOption.FALSE)

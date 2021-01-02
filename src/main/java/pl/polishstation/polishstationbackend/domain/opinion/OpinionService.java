@@ -1,5 +1,6 @@
 package pl.polishstation.polishstationbackend.domain.opinion;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.polishstation.polishstationbackend.apiutils.basic.BasicDomainService;
@@ -30,7 +31,7 @@ public class OpinionService extends BasicDomainService<Opinion, OpinionDTO, Opin
 
     @ScorePoints
     @Override
-    public OpinionDTO addEntity(OpinionPostDTO opinionPostDTO) {
+    public OpinionDTO addEntity(OpinionPostDTO opinionPostDTO) throws FirebaseMessagingException {
         var opionionDTO = super.addEntity(opinionPostDTO);
         updateAvgOpinion(opinionPostDTO);
         return opionionDTO;
